@@ -30,3 +30,4 @@ Icons by [Game Icons](https://game-icons.net/):
 
 # ZyL版本新增功能
 + 自动筛选功能
++ 记住筛选
