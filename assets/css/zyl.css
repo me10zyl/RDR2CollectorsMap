@@ -1,0 +1,23 @@
+.addToMap{
+    display: inline-block;
+    padding: 3px;
+    height: 20px;
+    width: 20px;
+    margin-left: 15px;
+    text-align: center;
+    background-color: #333;
+    color: #eee !important;
+    border-radius: 50%;
+    line-height: 12px;
+    white-space: nowrap;
+    user-select: none;
+}
+.calcAmount .enable{
+    background-color: #003308;
+}
+
+
+.calcAmount{
+    display: flex;
+    align-items: center;
+}
