@@ -48,10 +48,11 @@ var zyl  = {
             if(allCategories.indexOf(type) > -1){
                 var exist = $(this).find("span+.calcAmount");
                 var string = zyl.getCollectedAmountOfCategory(type) + "/" + zyl.getTotalSizeOfCategory(type);
-                if(exist){
+                if(exist.length > 0){
                     exist.find('.nums').text(string)
+                }else {
+                    $(this).find("span").after("<div style='margin-left: 10px' class='calcAmount'><span class='nums'>" + string + "</span><span  class='addToMap'>+</span></div>");
                 }
-                $(this).find("span").after("<div style='margin-left: 10px' class='calcAmount'><span class='nums'>" + string +  "</span><span  class='addToMap'>+</span></div>");
             }
         })
     },
