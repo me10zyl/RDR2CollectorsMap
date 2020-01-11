@@ -126,7 +126,7 @@ var zyl  = {
         for(var i in allCategories){
             var category = allCategories[i];
             var missingItems = this.getMissingItems(category);
-            var allEq = true;
+            var allEq = true && (missingItems.length > 0);
             missingItems.forEach(function(e){
                 if(split.indexOf(e) < 0){
                     allEq = false;
