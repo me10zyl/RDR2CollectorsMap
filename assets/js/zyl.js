@@ -100,7 +100,7 @@ var zyl  = {
                     return true;
                 }
                 var category = marker.category;
-                var title = marker.title;
+                var title = collectible == 'hawk' ? '鹰蛋' : marker.title;
                 markerCollected[collectible] = marker;
             }
         });
