@@ -10,7 +10,6 @@ var Menu = {
   },
   refreshTreasures: function () {
     $('.menu-hidden[data-type=treasure]').children('.collectible-wrapper').remove();
-
     Treasures.data.filter(function (item) {
       var collectibleElement = $('<div>').addClass('collectible-wrapper').attr('data-type', item.text);
       var collectibleTextElement = $('<p>').addClass('collectible').text(Language.get(item.text));
@@ -28,6 +27,7 @@ Menu.refreshMenu = function () {
   var weeklyItems = weeklySetData.sets[weeklySetData.current];
 
   $.each(MapBase.markers, function (_key, marker) {
+
     if (marker.day == Cycles.data.cycles[Cycles.data.current][marker.category]) {
       if (marker.subdata) {
         //This is for items with subdata to merge them
@@ -152,6 +152,10 @@ Menu.refreshMenu = function () {
   });
 
   Menu.reorderMenu('.menu-hidden[data-type=treasure]');
+  
+
+  zyl.calcCollected();
+
 };
 
 Menu.showAll = function () {
@@ -163,11 +167,12 @@ Menu.showAll = function () {
   MapBase.addMarkers();
 };
 
+
+
 Menu.hideAll = function () {
   $.each(categoryButtons, function (key, value) {
     $(value).addClass("disabled");
     $(`.menu-hidden[data-type=${$(value).attr('data-type')}]`).addClass("disabled");
-    console.log($(value).attr('data-type'));
   });
 
   enabledCategories = [];

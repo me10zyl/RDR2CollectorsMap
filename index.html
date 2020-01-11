@@ -42,6 +42,11 @@
     <div class="links-container">
       <a data-text="menu.hide_all" href="javascript:void(0);" onclick="Menu.hideAll()">Hide all</a>
       <a data-text="menu.show_all" href="javascript:void(0);" onclick="Menu.showAll()">Show all</a>
+      <a onclick="zyl.resetInput()"  href="javascript:void(0);">清空筛选</a>
+      <a  href="javascript:void(0);" onclick="Inventory.hideGotten()">筛选未收集</a>
+    </div>
+    <div>
+      <div style="margin-left: 15px">筛选大小：<input class="input-day" type="number" style="max-width:50px" id="hideGottenNumber"/></div>
     </div>
     <div>
       <div class="menu-option clickable" data-type="american_flowers">
@@ -776,6 +781,7 @@
   <script src="assets/js/language.js?nocache=213"></script>
   <script src="assets/js/menu.js?nocache=213"></script>
   <script src="assets/js/routes.js?nocache=213"></script>
+  <script src="assets/js/zyl.js?nocache=213"></script>
   <script src="assets/js/scripts.js?nocache=213"></script>
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-39999584-4"></script>

@@ -470,7 +470,7 @@ $('.collection-reset').on('click', function (e) {
 $(document).on('click', '.collectible-wrapper', function () {
   var collectible = $(this).data('type');
   var category = $(this).parent().data('type');
-
+ console.log(collectible)
   MapBase.removeItemFromMap(Cycles.data.cycles[Cycles.data.current][category], collectible, collectible, category);
 });
 
