@@ -81,7 +81,7 @@ var zyl  = {
         if(split.length > 0) {
             var titles = this.getMissingItems(category);
             split = split.filter(e=>titles.indexOf(e) < 0);
-            console.log(split, titles)
+            console.log( titles)
             $(".input-search").val(split.join(";"))
             $(document.querySelector('.input-search')).trigger('input');
         }
@@ -96,7 +96,7 @@ var zyl  = {
         $.each( MapBase.markers, function(key, marker){
             if(marker.amount == 0 && categories.indexOf(marker.category) > -1){
                 var collectible = marker.subdata || marker.text;
-                if(collectible.match('_\d')){
+                if(collectible.match(/_\d/)){
                     return true;
                 }
                 var category = marker.category;
