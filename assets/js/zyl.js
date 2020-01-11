@@ -100,16 +100,18 @@ var zyl  = {
                     return true;
                 }
                 var category = marker.category;
-                var title = collectible == 'hawk' ? '鹰蛋' : marker.title;
+                var title = marker.title;
                 markerCollected[collectible] = marker;
             }
         });
         var titles = [];
         $.each(markerCollected, function(k, v){
+            var collectible = marker.subdata || marker.text;
             var title = v.title;
             if(title.indexOf('#') > -1){
                 title = title.substring(0, title.indexOf('#')).trim();
             }
+            title = collectible == 'hawk' ? '鹰蛋' : title;
             if(titles.indexOf(title) == -1) {
                 titles.push(title);
             }
