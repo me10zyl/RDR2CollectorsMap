@@ -48,10 +48,10 @@ var zyl  = {
         var amount = 0;
         var subdatas = [];
         $.each(MapBase.markers, function(key, marker){
-            if(marker.amount > 0 && marker.category == category && subdatas.indexOf(marker.subdata) == -1){
-
+            var data = marker.subdata || marker.text;
+            if(marker.amount > 0 && marker.category == category && subdatas.indexOf(data) == -1){
                 amount += 1;
-                subdatas.push(marker.subdata);
+                subdatas.push(data);
             }
         });
         return amount;
