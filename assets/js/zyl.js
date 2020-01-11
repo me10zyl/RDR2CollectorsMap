@@ -106,7 +106,7 @@ var zyl  = {
         });
         var titles = [];
         $.each(markerCollected, function(k, v){
-            var collectible = marker.subdata || marker.text;
+            var collectible = v.subdata || v.text;
             var title = v.title;
             if(title.indexOf('#') > -1){
                 title = title.substring(0, title.indexOf('#')).trim();
