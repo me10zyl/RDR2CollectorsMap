@@ -383,10 +383,14 @@ input, textarea, select, .btn {
     font-size: 14px;
     height: 100%;
     border-radius: 3px;
+    margin-left: 6px;
+}
+
+.input-container-noflex .input-day {
+    margin-left: 0;
 }
 
 .input-day:disabled {
-    opacity: 0.5;
     cursor: not-allowed;
 }
 
@@ -471,7 +475,7 @@ input, textarea, select, .btn {
 }
 
 .side-menu .open-submenu {
-    width: 25px;
+    min-width: 25px;
     height: 25px;
     background: url(../images/arrow.png);
     margin: auto 0;
@@ -529,7 +533,7 @@ input, textarea, select, .btn {
     font-size: 15px;
 }
 
-.side-menu .menu-hidden .collectible {
+.side-menu .menu-hidden .collectible, .input-container label, .menu-option span {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -683,8 +687,9 @@ a.wiki-page:visited {
 
 .input-checkbox-wrapper {
     display: inline-block;
-    width: 28px;
+    min-width: 28px;
     height: 28px;
+    margin-left: 6px;
 }
 
 .input-checkbox-wrapper .input-checkbox {
@@ -706,19 +711,28 @@ a.wiki-page:visited {
     background-position: right center;
 }
 
+.input-checkbox-wrapper .input-checkbox:disabled+.input-checkbox-label {
+    cursor: not-allowed !important;
+}
+
 /* Custom action button styling */
 
 .input-container.clickable, .input-container.clickable label {
     cursor: pointer !important;
 }
 
+.input-container.clickable.disabled, .input-container.clickable.disabled label {
+    cursor: not-allowed !important;
+}
+
 .input-action {
     display: inline-block;
-    width: 28px;
+    min-width: 28px;
     height: 28px;
     background-image: url(../images/action_indicator.png);
     background-size: auto 100%;
     background-repeat: no-repeat;
+    margin-left: 6px;
 }
 
 .input-action.external {

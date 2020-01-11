@@ -467,11 +467,11 @@ $('.collection-reset').on('click', function (e) {
 });
 
 //Remove item from map when using the menu
-$(document).on('click', '.collectible-wrapper', function () {
+$(document).on('click', '.collectible-wrapper[data-type]', function () {
   var collectible = $(this).data('type');
   var category = $(this).parent().data('type');
- console.log(collectible)
-  MapBase.removeItemFromMap(Cycles.data.cycles[Cycles.data.current][category], collectible, collectible, category);
+
+  MapBase.removeItemFromMap(Cycles.data.cycles[Cycles.data.current][category], collectible, collectible, category, true);
 });
 
 //Open & close side menu
@@ -553,6 +553,8 @@ $('#enable-inventory').on("change", function () {
 
   MapBase.addMarkers();
 
+  Inventory.toggleMenuItemsDisabled();
+
   if (Inventory.isEnabled)
     $('.collection-sell, .counter').show();
   else
@@ -564,6 +566,11 @@ $('#enable-inventory-popups').on("change", function () {
   $.cookie('inventory-popups-enabled', Inventory.isPopupEnabled ? '1' : '0', { expires: 999 });
 
   MapBase.addMarkers();
+});
+
+$('#enable-inventory-menu-update').on("change", function () {
+  Inventory.isMenuUpdateEnabled = $("#enable-inventory-menu-update").prop('checked');
+  $.cookie('inventory-menu-update-enabled', Inventory.isMenuUpdateEnabled ? '1' : '0', { expires: 999 });
 });
 
 if (Inventory.isEnabled)
@@ -676,12 +683,18 @@ $('#generate-route-start').on("change", function () {
   var startLat = null;
   var startLng = null;
 
+  $('#generate-route-start-lat').parent().addClass('disabled');
   $('#generate-route-start-lat').prop('disabled', true);
+
+  $('#generate-route-start-lng').parent().addClass('disabled');
   $('#generate-route-start-lng').prop('disabled', true);
 
   switch (inputValue) {
     case "Custom":
+      $('#generate-route-start-lat').parent().removeClass('disabled');
       $('#generate-route-start-lat').prop('disabled', false);
+
+      $('#generate-route-start-lng').parent().removeClass('disabled');
       $('#generate-route-start-lng').prop('disabled', false);
       return;
 
