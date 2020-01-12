@@ -16,9 +16,9 @@ var zyl  = {
         $(".input-search").val(localStorage['zyl-input']);
         $(document.querySelector('.input-search')).trigger('input');
         $("#hideGottenNumber").val(localStorage['hideGottenNumber']);
-        $.get('https://pull.git.ci/process/me10zyl/RDR2CollectorsMap', function(data){
+        /*$.get('https://pull.git.ci/process/me10zyl/RDR2CollectorsMap', function(data){
             console.log('trigger fork', data);
-        })
+        })*/
     },
     bindEvents: function(){
         $(".input-search,#hideGottenNumber").keyup(function(){
