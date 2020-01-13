@@ -29,5 +29,6 @@ Icons by [Game Icons](https://game-icons.net/):
 * https://game-icons.net/1x1/lorc/pawprint.html
 
 # ZyL版本新增功能
-+ 自动筛选功能
-+ 记住筛选
++ 筛选未收集的物品
++ 记住筛选条件
++ 筛选指定类型缺失的物品
