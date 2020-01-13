@@ -27,12 +27,13 @@ var zyl  = {
         Promise.all([localSha, remoteSha]).then((commits)=>{
             let local = commits[0];
             let remote = commits[1];
-            if (remote == local) {
+            window.commits = commits
+            if (local.commit.commit.committer.date >= remote.commit.commit.committer.date) {
                 $("#updated").html("<font color='green'>已更新</font>");
             }else{
                 $("#updated").html("<font color='red'>未更新</font>");
             }
-            $("#remoteShaDate").text("("+new Date(remote.commit.commit.committer.date).toLocaleString()+")")
+            $("#remoteShaDate").text("(Local:"+new Date(local.commit.commit.committer.date).toLocaleString() + ",Remote:" +new Date(remote.commit.commit.committer.date).toLocaleString()+")")
             $("#remoteMsg").text(remote.commit.commit.message)
         })
     },
@@ -89,7 +90,6 @@ var zyl  = {
         $.each(MapBase.markers, function(key, marker){
             var data = marker.subdata || marker.text;
             if(marker.amount > 0 && marker.category == category && subdatas.indexOf(data) == -1){
-                console.log(marker)
                 amount += 1;
                 subdatas.push(data);
             }
