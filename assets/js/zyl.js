@@ -16,9 +16,25 @@ var zyl  = {
         $(".input-search").val(localStorage['zyl-input']);
         $(document.querySelector('.input-search')).trigger('input');
         $("#hideGottenNumber").val(localStorage['hideGottenNumber']);
-        /*$.get('https://pull.git.ci/process/me10zyl/RDR2CollectorsMap', function(data){
-            console.log('trigger fork', data);
-        })*/
+        let localSha = $.get('https://api.github.com/repos/me10zyl/RDR2CollectorsMap/branches/master', function(data){
+            console.log('localmaster', data);
+            $("#current-sha").text(data.commit.sha)
+        });
+        let remoteSha = $.get('https://api.github.com/repos/jeanropke/RDR2CollectorsMap/branches/master', function(data){
+            console.log('remotemaster', data);
+            $("#remote-sha").text(data.commit.sha)
+        });
+        Promise.all([localSha, remoteSha]).then((commits)=>{
+            let local = commits[0];
+            let remote = commits[1];
+            if (remote == local) {
+                $("#updated").html("<font color='green'>已更新</font>");
+            }else{
+                $("#updated").html("<font color='red'>未更新</font>");
+            }
+            $("#remoteShaDate").text("("+new Date(remote.commit.commit.committer.date).toLocaleString()+")")
+            $("#remoteMsg").text(remote.commit.commit.message)
+        })
     },
     bindEvents: function(){
         $(".input-search,#hideGottenNumber").keyup(function(){

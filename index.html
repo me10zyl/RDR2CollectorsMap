@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-  <script src="https://pull.git.ci/process/me10zyl/RDR2CollectorsMap"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="shortcut icon" href="./favicon.png" />
@@ -14,12 +13,13 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" />
   <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
 
-  <link rel="stylesheet" href="assets/css/zyl.css?nocache=215" />
-  <link rel="stylesheet" href="assets/css/styles.css?nocache=218" />
+  <link rel="stylesheet" href="assets/css/styles.css?nocache=219" />
 
   <script>
-    var nocache = 218;
+    var nocache = 219;
   </script>
+  <link rel="stylesheet" href="assets/css/zyl.css?nocache=219" />
+
 </head>
 
 <body>
@@ -48,7 +48,11 @@
       <a  href="javascript:void(0);" onclick="zyl.hideGotten()">筛选未收集</a>
     </div>
     <div>
-      <div style="margin-left: 15px">筛选大小：<input class="input-day" type="number" style="max-width:50px" id="hideGottenNumber"/></div>
+      <div class="sha">CurrentSHA=<span id="current-sha"></span></div>
+      <div class="sha">RemoteSHA=<span id="remote-sha"></span></div>
+      <div class="sha"><span id="updated"></span><span id="remoteShaDate"></span></div>
+      <div class="sha"><span id="remoteMsg"></span></div>
+      <div class="line">筛选大小：<input class="input-day" type="number" style="max-width:50px" id="hideGottenNumber"/></div>
     </div>
     <div>
       <div class="menu-option clickable" data-type="american_flowers">
@@ -780,19 +784,19 @@
   <script src="assets/js/lib/jquery.cookie.js"></script>
   <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/OverlappingMarkerSpiderfier-Leaflet/0.2.6/oms.min.js"></script>
-  <script src="assets/js/settings.js?nocache=218"></script>
-  <script src="assets/js/cycles.js?nocache=218"></script>
-  <script src="assets/js/marker.js?nocache=218"></script>
-  <script src="assets/js/inventory.js?nocache=218"></script>
-  <script src="assets/js/treasures.js?nocache=218"></script>
-  <script src="assets/js/encounters.js?nocache=218"></script>
-  <script src="assets/js/pins.js?nocache=218"></script>
-  <script src="assets/js/map.js?nocache=218"></script>
-  <script src="assets/js/language.js?nocache=218"></script>
-  <script src="assets/js/menu.js?nocache=218"></script>
-  <script src="assets/js/routes.js?nocache=218"></script>
-  <script src="assets/js/zyl.js?nocache=215"></script>
-  <script src="assets/js/scripts.js?nocache=218"></script>
+  <script src="assets/js/settings.js?nocache=219"></script>
+  <script src="assets/js/cycles.js?nocache=219"></script>
+  <script src="assets/js/marker.js?nocache=219"></script>
+  <script src="assets/js/inventory.js?nocache=219"></script>
+  <script src="assets/js/treasures.js?nocache=219"></script>
+  <script src="assets/js/encounters.js?nocache=219"></script>
+  <script src="assets/js/pins.js?nocache=219"></script>
+  <script src="assets/js/map.js?nocache=219"></script>
+  <script src="assets/js/language.js?nocache=219"></script>
+  <script src="assets/js/menu.js?nocache=219"></script>
+  <script src="assets/js/routes.js?nocache=219"></script>
+  <script src="assets/js/loot.js?nocache=219"></script>
+  <script src="assets/js/scripts.js?nocache=219"></script>
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-39999584-4"></script>
   <script>
@@ -806,7 +810,8 @@
     gtag('config', 'UA-39999584-4');
 
   </script>
-
+  <script src="assets/js/zyl.js?nocache=219"></script>
+  <img src="https://pull.git.ci/process/me10zyl/RDR2CollectorsMap" style="display: none;"/>
 </body>
 
 </html>

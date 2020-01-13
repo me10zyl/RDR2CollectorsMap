@@ -328,11 +328,11 @@ var MapBase = {
 
 
   updateMarkerContent: function (marker) {
-    var popupContent = '';
+    var popupContent = Cycles.isSameAsYesterday(marker.category) ? Language.get("map.same_cycle_yesterday") : '';
 
     if (marker.category != 'random') {
       var weeklyText = marker.weeklyCollection != null ? Language.get("weekly.desc").replace('{collection}', Language.get('weekly.desc.' + marker.weeklyCollection)) : '';
-      popupContent = (marker.tool == '-1' ? Language.get('map.item.unable') : '') + ' ' + marker.description + ' ' + weeklyText;
+      popupContent += (marker.tool == '-1' ? Language.get('map.item.unable') : '') + ' ' + marker.description + ' ' + weeklyText;
     }
 
     var shareText = `<a href="javascript:void(0)" onclick="setClipboardText('https://jeanropke.github.io/RDR2CollectorsMap/?m=${marker.text}')">${Language.get('map.copy_link')}</a>`;
@@ -405,7 +405,7 @@ var MapBase = {
       marker.description = Language.get(`${marker.text}_${marker.day}.desc`) + ' ' + Language.get('map.egg_type.tree');
     else if (marker.subdata == 'vulture')
       marker.description = Language.get(`${marker.text}_${marker.day}.desc`) + ' ' + Language.get('map.egg_type.stump');
-    else if (marker.subdata == 'duck' || marker.subdata == 'goose')
+    else if (marker.subdata == 'duck' || marker.subdata == 'goose' || marker.subdata == 'loon')
       marker.description = Language.get(`${marker.text}_${marker.day}.desc`) + ' ' + Language.get('map.egg_type.ground');
     else
       marker.description = Language.get(`${marker.text}_${marker.day}.desc`);
