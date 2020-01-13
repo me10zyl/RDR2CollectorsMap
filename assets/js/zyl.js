@@ -11,6 +11,7 @@ var zyl  = {
         this.bindEvents();
         this.loadData();
         this.calcSearch();
+        this.calcValuable();
     },
     loadData:function(){
         $(".input-search").val(localStorage['zyl-input']);
@@ -82,6 +83,10 @@ var zyl  = {
 
     getAllCategories : function(){
         return ['american_flowers','card_cups','card_swords','card_wands', 'card_pentacles', 'lost_bracelet', 'lost_earrings', 'lost_necklaces','lost_ring','antique_bottles', 'bird_eggs','arrowhead','family_heirlooms','coin']
+    },
+
+    getCategoryValues:function(category){
+      return $(".menu-hidden[data-type="+category+"] span")[0].textContent.match(/\d+/)[0];
     },
 
     getCollectedAmountOfCategory : function(category){
@@ -201,6 +206,37 @@ var zyl  = {
         $(".input-search").val(titles.join(";"))
         $(document.querySelector('.input-search')).trigger('input');
         zyl.save()
+    },
+
+    menuSaved:function(){
+        this.calcCollected();
+        this.calcValuable();
+    },
+
+    getCategoryName: function(category){
+      return $("[data-text='menu." + category + "']").text();
+    },
+
+    calcValuable:function () {
+        console.log('calcValuable')
+        let allCategories = this.getAllCategories();
+        let valuables = [];
+        for (let allCategoriesKey in allCategories) {
+            let category = allCategories[allCategoriesKey];
+            let amount = this.getTotalSizeOfCategory(category) - this.getCollectedAmountOfCategory(category);
+            valuables.push({
+                category : category,
+                amount : amount
+            })
+        }
+        valuables.sort((a,b)=>{
+            let number = a.amount - b.amount;
+            if (number == 0) {
+                return zyl.getCategoryValues(b.category) - zyl.getCategoryValues(a.category)
+            }
+            return number;
+        })
+        $("#valuable").html(valuables.map(e=>(zyl.getCategoryName(e.category)+ "(" + e.amount+")")).join("，"));
     }
 }
 

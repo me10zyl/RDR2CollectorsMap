@@ -442,7 +442,7 @@ var MapBase = {
       });
     });
     console.log('saved');
-    zyl.calcCollected();
+    zyl.menuSaved();
   },
   gameToMap: function (lat, lng, name = "Debug Marker") {
     MapBase.debugMarker((0.01552 * lng + -63.6), (0.01552 * lat + 111.29), name);
