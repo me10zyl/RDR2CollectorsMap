@@ -1,4 +1,4 @@
 git add .
 git commit -am "update"
-git pull fork master
+git pull origin fork
 git push -u origin master
