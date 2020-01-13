@@ -89,6 +89,7 @@ var zyl  = {
         $.each(MapBase.markers, function(key, marker){
             var data = marker.subdata || marker.text;
             if(marker.amount > 0 && marker.category == category && subdatas.indexOf(data) == -1){
+                console.log(marker)
                 amount += 1;
                 subdatas.push(data);
             }
@@ -109,7 +110,7 @@ var zyl  = {
     },
 
     getMissingItems : function(category){
-        var markerCollected = {
+        /*var markerCollected = {
 
         }
         var categories = [category];
@@ -135,7 +136,14 @@ var zyl  = {
             if(titles.indexOf(title) == -1) {
                 titles.push(title);
             }
-        });
+        });*/
+        var titles = [];
+        $(".menu-option[data-type="+category+"]+.menu-hidden .collectible-wrapper").each(function(){
+            var num = $(this).find(".counter-number").text();
+            if(num == 0){
+                titles.push($(this).find("p[class=collectible]").text());
+            }
+        })
         return titles;
     },
 
@@ -165,7 +173,7 @@ var zyl  = {
         var titles = this.getMissingItems(category);
         var val = $(".input-search").val();
         var values = val.split(";");
-        if(values.length > 0) {
+        if(values.length > 0 && val.trim() != "") {
             titles = titles.filter(function (t) {
                 return values.indexOf(t) < 0;
             });
