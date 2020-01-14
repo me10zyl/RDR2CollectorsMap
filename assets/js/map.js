@@ -428,12 +428,12 @@ var MapBase = {
 
   save: function () {
     //Before saving, remove previous cookies peepoSmart
-    $.removeCookie('removed-items');
+    /*$.removeCookie('removed-items');
     $.each($.cookie(), function (key, value) {
       if (key.startsWith('removed-items')) {
         $.removeCookie(key)
       }
-    });
+    });*/
     var temp = "";
     $.each(MapBase.markers, function (key, marker) {
       if (marker.day == Cycles.data.cycles[Cycles.data.current][marker.category] && (marker.amount > 0 || marker.isCollected))
