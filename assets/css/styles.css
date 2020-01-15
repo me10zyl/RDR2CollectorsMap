@@ -52,7 +52,14 @@ p {
 input, textarea, select, .btn {
     outline: none;
 }
-
+.cycle-table {
+    color: white;
+    background: black;
+}
+.cycle-table td, .cycle-table th {
+    padding: 2px;
+    border: 1px solid black;
+}
 #main-header {
     display: flex;
     margin: 0 10px 10px 10px;
@@ -361,11 +368,13 @@ input, textarea, select, .btn {
 }
 
 .wide-select-menu {
+    min-width: 150px;
     width: 150px;
 }
 
 .narrow-select-menu {
     min-width: 75px;
+    width: 75px;
 }
 
 .btn-default {
@@ -683,6 +692,19 @@ a.wiki-page:visited {
     align-items: center;
 }
 
+.marker-warning-wrapper {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    border: 1px solid #f2cf20;
+    border-radius: 8px;
+    padding: 4px;
+}
+
+.marker-warning-wrapper .warning-icon {
+    margin-right: 5px;
+}
+
 /* Custom checkbox styling */
 
 .input-checkbox-wrapper {
@@ -756,12 +778,20 @@ a.no-style:visited {
 /* Bootstrap modal styling */
 
 .modal-content {
+    background: url(../images/modal_bg_long.png);
+    background-size: 100% 100% !important;
+    background-repeat: no-repeat !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+.modal-sm .modal-content {
     background: url(../images/modal_bg.png);
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    -webkit-box-shadow: none;
-    box-shadow: none;
-    border: none;
+    background-repeat: no-repeat !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    border: none !important;
 }
 
 .modal-header, .modal-body, .modal-footer {
