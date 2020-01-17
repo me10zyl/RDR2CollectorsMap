@@ -12,6 +12,7 @@ var zyl = {
         this.loadData();
         this.calcSearch();
         this.calcValuable();
+
     },
     loadData: function () {
         $(".input-search").val(localStorage['zyl-input']);
