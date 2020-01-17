@@ -18,16 +18,18 @@ var MapBase = {
   markers: [],
 
   init: function () {
+
+    //Please, do not use the GitHub map tiles. Thanks
     var mapLayers = [
       L.tileLayer('https://s.rsg.sc/sc/images/games/RDR2/map/game/{z}/{x}/{y}.jpg', {
         noWrap: true,
         bounds: L.latLngBounds(L.latLng(-144, 0), L.latLng(0, 176))
       }),
-      L.tileLayer('assets/maps/detailed/{z}/{x}_{y}.jpg', {
+      L.tileLayer((isLocalHost() ? 'assets/maps/' : 'https://jeanropke.b-cdn.net/') + 'detailed/{z}/{x}_{y}.jpg', {
         noWrap: true,
         bounds: L.latLngBounds(L.latLng(-144, 0), L.latLng(0, 176))
       }),
-      L.tileLayer('assets/maps/darkmode/{z}/{x}_{y}.jpg', {
+      L.tileLayer((isLocalHost() ? 'assets/maps/' : 'https://jeanropke.b-cdn.net/') +'darkmode/{z}/{x}_{y}.jpg', {
         noWrap: true,
         bounds: L.latLngBounds(L.latLng(-144, 0), L.latLng(0, 176))
       })
@@ -452,6 +454,9 @@ var MapBase = {
   },
   gameToMap: function (lat, lng, name = "Debug Marker") {
     MapBase.debugMarker((0.01552 * lng + -63.6), (0.01552 * lat + 111.29), name);
+  },
+  game2Map: function ({x, y, z}) {
+    MapBase.debugMarker((0.01552 * y + -63.6), (0.01552 * x + 111.29), z);
   }
 };
 
