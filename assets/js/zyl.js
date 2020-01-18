@@ -12,6 +12,32 @@ var zyl = {
         this.loadData();
         this.calcSearch();
         this.calcValuable();
+        this.addMarkers();
+        zyl.layerGroup.addTo(MapBase.map)
+    },
+    layerGroup : L.layerGroup([]),
+    addMarkers : function(){
+        zyl.layerGroup.clearLayers();
+        var markers = MapBase.markers;
+        if(uniqueSearchMarkers){
+            markers = uniqueSearchMarkers;
+        }
+        markers.forEach(function(marker){
+            if (marker.day != Cycles.data.cycles[Cycles.data.current][marker.category] && !Settings.showAllMarkers) return;
+
+            if (!uniqueSearchMarkers.includes(marker))
+                return;
+
+            if (!enabledCategories.includes(marker.category)) return;
+
+            if (parseInt(Settings.toolType) < parseInt(marker.tool)) return;
+
+            var isWeekly = weeklySetData.sets[weeklySetData.current].filter(weekly => {
+                    return weekly.item === (marker.text).replace(/_\d+/, "");
+             }).length > 0;
+
+            zyl.createDivIcon(marker)
+        })
 
     },
     loadData: function () {
@@ -80,6 +106,7 @@ var zyl = {
                 }
             }
         })
+        this.addMarkers();
     },
     getExtraInfo: function (category) {
         let day = $(".menu-option[data-type=" + category + "] .input-day").val();
@@ -172,6 +199,14 @@ var zyl = {
             }
         })
         return titles;
+    },
+
+    createDivIcon:function(marker){
+        var myIcon = L.divIcon({className: 'my-div-icon-' + zyl.getMissingItemsTypes(marker.category).length});
+        L.marker([marker.lat, marker.lng], {
+            icon : myIcon
+        }).addTo(zyl.layerGroup);
+
     },
 
 

@@ -187,8 +187,9 @@ var MapBase = {
       });
 
     }
-
+ 
     MapBase.addMarkers();
+    zyl.addMarkers();
   },
 
   addMarkers: function (refreshMenu = false) {

@@ -40,3 +40,80 @@
     font-size:3px;
     margin-left: 5px;
 }
+.my-div-icon-0,.my-div-icon-1,.my-div-icon-2,.my-div-icon-3,.my-div-icon-4,.my-div-icon-5,.my-div-icon-6,.my-div-icon-7,.my-div-icon-8,.my-div-icon-9,.my-div-icon-10,.my-div-icon-11,.my-div-icon-12,.my-div-icon-13,.my-div-icon-14,.my-div-icon-15{
+    color: #ff0700;
+    font-size: 15px;
+}
+
+.my-div-icon-1{
+    color: #00ff23;
+}
+
+.my-div-icon-2{
+    color: #00ff7d;
+}
+
+.my-div-icon-3{
+    color: #00ff23;
+}
+
+.my-div-icon-4{
+    color: #c4ff00;
+}
+
+.my-div-icon-5{
+    color: #fffa00;
+}
+
+.my-div-icon-6{
+    color: #ffde00;
+}
+
+.my-div-icon-0:before{
+    content: '0';
+}
+.my-div-icon-1:before{
+    content: '1';
+}
+.my-div-icon-2:before{
+    content: '2';
+}
+.my-div-icon-3:before{
+    content: '3';
+}
+.my-div-icon-4:before{
+    content: '4';
+}
+.my-div-icon-5:before{
+    content: '5';
+}
+.my-div-icon-6:before{
+    content: '6';
+}
+.my-div-icon-7:before{
+    content: '7';
+}
+.my-div-icon-8:before{
+    content: '8';
+}
+.my-div-icon-9:before{
+    content: '9';
+}
+.my-div-icon-10:before{
+    content: '10';
+}
+.my-div-icon-11:before{
+    content: '11';
+}
+.my-div-icon-12:before{
+    content: '12';
+}
+.my-div-icon-13:before{
+    content: '13';
+}
+.my-div-icon-14:before{
+    content: '14';
+}
+.my-div-icon-15:before{
+    content: '15';
+}
