@@ -499,11 +499,9 @@ var MapBase = {
         expires: 999
       });
     });
-<<<<<<< HEAD
+
     console.log('saved');
     zyl.menuSaved();
-=======
->>>>>>> 3697f3bebff63d8dedde321c32ea07ce1d3035ff
   },
   gameToMap: function (lat, lng, name = "Debug Marker") {
     MapBase.debugMarker((0.01552 * lng + -63.6), (0.01552 * lat + 111.29), name);
