@@ -30,10 +30,7 @@ var Inventory = {
     this.toggleMenuItemsDisabled();
   },
 
-  
-
   changeMarkerAmount: function (name, amount, skipInventory = false) {
-
     var marker = MapBase.markers.filter(_m => {
       return (_m.text == name || _m.subdata == name);
     });
@@ -75,37 +72,6 @@ var Inventory = {
 
   toggleMenuItemsDisabled: function () {
     if (!Inventory.isEnabled) {
-<<<<<<< HEAD
-      $('#enable-inventory-popups').parent().parent().addClass('disabled');
-      $('#enable-inventory-popups').prop('disabled', true);
-
-      $('#enable-inventory-menu-update').parent().parent().addClass('disabled');
-      $('#enable-inventory-menu-update').prop('disabled', true);
-
-      $('#reset-collection-updates-inventory').parent().parent().addClass('disabled');
-      $('#reset-collection-updates-inventory').prop('disabled', true);
-
-      $('#inventory-stack').parent().addClass('disabled');
-      $('#inventory-stack').prop('disabled', true);
-
-      $('[data-target="#clear-inventory-modal"]').addClass('disabled');
-      $('[data-target="#clear-inventory-modal"]').prop('disabled', true);
-    } else {
-      $('#enable-inventory-popups').parent().parent().removeClass('disabled');
-      $('#enable-inventory-popups').prop('disabled', false);
-
-      $('#enable-inventory-menu-update').parent().parent().removeClass('disabled');
-      $('#enable-inventory-menu-update').prop('disabled', false);
-
-      $('#reset-collection-updates-inventory').parent().parent().removeClass('disabled');
-      $('#reset-collection-updates-inventory').prop('disabled', false);
-
-      $('#inventory-stack').parent().removeClass('disabled');
-      $('#inventory-stack').prop('disabled', false);
-
-      $('[data-target="#clear-inventory-modal"]').removeClass('disabled');
-      $('[data-target="#clear-inventory-modal"]').prop('disabled', false);
-=======
       $('#enable-inventory-popups').parent().parent().hide();
       $('#enable-inventory-menu-update').parent().parent().hide();
       $('#reset-collection-updates-inventory').parent().parent().hide();
@@ -117,7 +83,6 @@ var Inventory = {
       $('#reset-collection-updates-inventory').parent().parent().show();
       $('#inventory-stack').parent().show();
       $('[data-target="#clear-inventory-modal"]').show();
->>>>>>> 3697f3bebff63d8dedde321c32ea07ce1d3035ff
     }
   }
 }
