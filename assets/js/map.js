@@ -29,7 +29,7 @@ var MapBase = {
         noWrap: true,
         bounds: L.latLngBounds(L.latLng(-144, 0), L.latLng(0, 176))
       }),
-      L.tileLayer((isLocalHost() ? 'assets/maps/' : 'https://jeanropke.b-cdn.net/') +'darkmode/{z}/{x}_{y}.jpg', {
+      L.tileLayer((isLocalHost() ? 'assets/maps/' : 'https://jeanropke.b-cdn.net/') + 'darkmode/{z}/{x}_{y}.jpg', {
         noWrap: true,
         bounds: L.latLngBounds(L.latLng(-144, 0), L.latLng(0, 176))
       })
@@ -98,8 +98,7 @@ var MapBase = {
       .done(function (data) {
         MapBase.overlays = data;
         MapBase.setOverlays();
-
-        console.log('overlays loaded');
+        console.info('%c[Overlays] Loaded!', 'color: #bada55');
       });
   },
 
@@ -142,11 +141,34 @@ var MapBase = {
       $.each(_cycles, function (day, _markers) {
         $.each(_markers, function (key, marker) {
           MapBase.markers.push(new Marker(marker.text, marker.lat, marker.lng, marker.tool, day, _category, marker.subdata, marker.video, marker.loot_table));
-
         });
       });
     });
     uniqueSearchMarkers = MapBase.markers;
+
+    // Reset markers daily.
+    var curDate = new Date();
+    date = curDate.getUTCFullYear() + '-' + (curDate.getUTCMonth() + 1) + '-' + curDate.getUTCDate();
+
+    if (date != $.cookie('date') && Settings.resetMarkersDaily) {
+      console.log('New day, resetting markers...');
+
+      var markers = MapBase.markers;
+
+      $.each(markers, function (key, value) {
+        if (inventory[value.text])
+          inventory[value.text].isCollected = false;
+
+        markers[key].isCollected = false;
+        markers[key].canCollect = value.amount < Inventory.stackSize;
+      });
+
+      MapBase.markers = markers;
+      MapBase.save();
+    }
+
+    $.cookie('date', date, { expires: 999 });
+
     MapBase.addMarkers(true);
 
     //if a marker is passed on url, check if is valid
@@ -214,11 +236,11 @@ var MapBase = {
     Layers.pinsLayer.addTo(MapBase.map);
 
     MapBase.addFastTravelMarker();
-    MadamNazar.addMadamNazar(refreshMenu);
 
     Menu.refreshItemsCounter();
     Treasures.addToMap();
     Encounters.addToMap();
+    MadamNazar.addMadamNazar();
 
     if (refreshMenu)
       Menu.refreshMenu();
@@ -236,7 +258,7 @@ var MapBase = {
       .done(function (data) {
         weeklySetData = data;
       });
-    console.log('weekly sets loaded');
+    console.info('%c[Weekly Sets] Loaded!', 'color: #bada55');
   },
 
   removeItemFromMap: function (day, text, subdata, category, skipInventory = false) {
@@ -299,6 +321,24 @@ var MapBase = {
 
     Menu.refreshItemsCounter();
   },
+
+  /*removeCategoryFromMap: function (category) {
+    var _markers = MapBase.markers.filter(function (marker) {
+      return marker.category == category;
+    });
+    $.each(_markers, function (key, marker) {
+      if (Layers.itemMarkersLayer.getLayerById(marker.text) != null &&
+        marker.day == Cycles.data.cycles[Cycles.data.current][marker.category]) {
+        if (!categoriesDisabledByDefault.includes(category)) {
+          MapBase.addMarkerOnMap(marker);
+          console.log('addMarkerOnMap');
+        }
+        else
+          MapBase.map.removeLayer(Layers.itemMarkersLayer.getLayerById(marker.text));
+        console.log('removeLayer');
+      }
+    });
+  },*/
 
   getIconColor: function (value) {
     switch (value) {
@@ -379,10 +419,19 @@ var MapBase = {
       return weekly.item === (marker.text).replace(/_\d+/, "");
     }).length > 0;
 
+    var icon = '';
+    if (marker.subdata == 'agarita' || marker.subdata == 'blood_flower') {
+      icon = `./assets/images/icons/${marker.category}_timed_${MapBase.getIconColor(isWeekly ? 'weekly' : 'day_' + marker.day)}.png`;
+    } else if (marker.category == 'random') {
+      icon = `./assets/images/icons/${marker.category}_lightgray_${marker.tool}.png`;
+    } else {
+      icon = `./assets/images/icons/${marker.category}_${MapBase.getIconColor(isWeekly ? 'weekly' : 'day_' + marker.day)}.png`;
+    }
+
     var tempMarker = L.marker([marker.lat, marker.lng], {
       opacity: marker.canCollect ? 1 : .35,
       icon: new L.Icon.DataMarkup({
-        iconUrl: './assets/images/icons/' + marker.category + '_' + (marker.category == 'random' ? `lightgray_${marker.tool}` : MapBase.getIconColor(isWeekly ? 'weekly' : 'day_' + marker.day)) + '.png',
+        iconUrl: icon,
         iconSize: [35, 45],
         iconAnchor: [17, 42],
         popupAnchor: [1, -32],
@@ -450,13 +499,16 @@ var MapBase = {
         expires: 999
       });
     });
+<<<<<<< HEAD
     console.log('saved');
     zyl.menuSaved();
+=======
+>>>>>>> 3697f3bebff63d8dedde321c32ea07ce1d3035ff
   },
   gameToMap: function (lat, lng, name = "Debug Marker") {
     MapBase.debugMarker((0.01552 * lng + -63.6), (0.01552 * lat + 111.29), name);
   },
-  game2Map: function ({x, y, z}) {
+  game2Map: function ({ x, y, z }) {
     MapBase.debugMarker((0.01552 * y + -63.6), (0.01552 * x + 111.29), z);
   }
 };
@@ -480,8 +532,7 @@ MapBase.loadFastTravels = function () {
     .done(function (data) {
       fastTravelData = data;
     });
-
-  console.log('fast travels loaded');
+  console.info('%c[Fast travels] Loaded!', 'color: #bada55');
 };
 
 MapBase.addFastTravelMarker = function () {
@@ -564,32 +615,31 @@ MapBase.formatDate = function (date) {
  */
 var MadamNazar = {
 
-  possibleLocations: [],
+  possibleLocations: [{ "x": "-40.5625", "y": "109.078125" }, { "x": "-43", "y": "132.828125" }, { "x": "-36.75", "y": "153.6875" }, { "x": "-56.171875", "y": "78.59375" }, { "x": "-63.6640625", "y": "105.671875" }, { "x": "-60.421875", "y": "130.640625" }, { "x": "-66.046875", "y": "151.03125" }, { "x": "-84.4375", "y": "82.03125" }, { "x": "-90.53125", "y": "135.65625" }, { "x": "-100.140625", "y": "48.8125" }, { "x": "-105.0703125", "y": "84.9765625" }, { "x": "-124.03125", "y": "34.171875" }],
   currentLocation: null,
   currentDate: null,
 
   loadMadamNazar: function () {
-    $.getJSON('https://pepegapi.jeanropke.net/rdo/nazar')
-      .done(function (nazar) {
-        MadamNazar.currentLocation = nazar.nazar_id - 1;
-        MadamNazar.currentDate = nazar.date;
-      }).always(function () {
-        $.getJSON('data/nazar.json?nocache=' + nocache)
-          .done(function (data) {
-            MadamNazar.possibleLocations = data;
-            MadamNazar.addMadamNazar(false);
-          });
-      });
+
+    var _nazarParam = getParameterByName('nazar');
+    if (_nazarParam < MadamNazar.possibleLocations.length && _nazarParam) {
+      MadamNazar.currentLocation = _nazarParam;
+      MadamNazar.currentDate = '';
+      MadamNazar.addMadamNazar();
+    } else {
+      $.getJSON('https://pepegapi.jeanropke.net/rdo/nazar')
+        .done(function (nazar) {
+          MadamNazar.currentLocation = nazar.nazar_id - 1;
+          MadamNazar.currentDate = MapBase.formatDate(nazar.date);
+          MadamNazar.addMadamNazar();
+        });
+    }
   },
 
-  addMadamNazar: function (firstLoad) {
-    if (firstLoad)
+  addMadamNazar: function () {
+    if (MadamNazar.currentLocation == null)
       return;
 
-    if (MadamNazar.currentLocation == null) {
-      console.error('Unable to get Nazar position. Try again later.');
-      return;
-    }
     if (enabledCategories.includes('nazar')) {
       var marker = L.marker([MadamNazar.possibleLocations[MadamNazar.currentLocation].x, MadamNazar.possibleLocations[MadamNazar.currentLocation].y], {
         icon: L.icon({
@@ -601,8 +651,7 @@ var MadamNazar = {
           shadowUrl: './assets/images/markers-shadow.png'
         })
       });
-
-      marker.bindPopup(`<h1>${Language.get('menu.madam_nazar')} - ${MapBase.formatDate(MadamNazar.currentDate)}</h1><p style="text-align: center;">${Language.get('map.madam_nazar.desc').replace('{link}', '<a href="https://twitter.com/MadamNazarIO" target="_blank">@MadamNazarIO</a>')}</p>`, { minWidth: 300 });
+      marker.bindPopup(`<h1>${Language.get('menu.madam_nazar')} - ${MadamNazar.currentDate}</h1><p style="text-align: center;">${Language.get('map.madam_nazar.desc').replace('{link}', '<a href="https://twitter.com/MadamNazarIO" target="_blank">@MadamNazarIO</a>')}</p>`, { minWidth: 300 });
       Layers.itemMarkersLayer.addLayer(marker);
     }
   }

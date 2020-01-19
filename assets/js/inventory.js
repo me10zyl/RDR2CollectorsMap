@@ -75,6 +75,7 @@ var Inventory = {
 
   toggleMenuItemsDisabled: function () {
     if (!Inventory.isEnabled) {
+<<<<<<< HEAD
       $('#enable-inventory-popups').parent().parent().addClass('disabled');
       $('#enable-inventory-popups').prop('disabled', true);
 
@@ -104,6 +105,19 @@ var Inventory = {
 
       $('[data-target="#clear-inventory-modal"]').removeClass('disabled');
       $('[data-target="#clear-inventory-modal"]').prop('disabled', false);
+=======
+      $('#enable-inventory-popups').parent().parent().hide();
+      $('#enable-inventory-menu-update').parent().parent().hide();
+      $('#reset-collection-updates-inventory').parent().parent().hide();
+      $('#inventory-stack').parent().hide();
+      $('[data-target="#clear-inventory-modal"]').hide();
+    } else {
+      $('#enable-inventory-popups').parent().parent().show();
+      $('#enable-inventory-menu-update').parent().parent().show();
+      $('#reset-collection-updates-inventory').parent().parent().show();
+      $('#inventory-stack').parent().show();
+      $('[data-target="#clear-inventory-modal"]').show();
+>>>>>>> 3697f3bebff63d8dedde321c32ea07ce1d3035ff
     }
   }
 }

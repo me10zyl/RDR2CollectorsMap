@@ -10,13 +10,18 @@
     content="Red Dead Online Collectors Map. Find all collectibles across the world and sell to Madam Nazar.">
   <meta name="keywords"
     content="Red Dead Online, Collectors Map, Collectors Map, Map, Interactive Map, Interactive, jeanropke map, jeanropke">
+
+  <!-- Preconnects to improve performance -->
+  <link rel="preconnect" href="https://pepegapi.jeanropke.net">
+  <link rel="preconnect" href="https://jeanropke.b-cdn.net">
+
   <link rel="stylesheet" href="assets/css/leaflet.css" />
   <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
 
-  <link rel="stylesheet" href="assets/css/styles.css?nocache=230" />
+  <link rel="stylesheet" href="assets/css/styles.css?nocache=232" />
 
   <script>
-    var nocache = 230;
+    var nocache = 232;
   </script>
   <link rel="stylesheet" href="assets/css/zyl.css?nocache=219" />
 
@@ -435,7 +440,8 @@
         </div>
       </div>
       <div class="input-container">
-        <label for="enable-inventory-menu-update" data-text="menu.enable_inventory_menu_update">Toggling menu items updates inventory</label>
+        <label for="enable-inventory-menu-update" data-text="menu.enable_inventory_menu_update">Toggling menu items
+          updates inventory</label>
         <div class="input-checkbox-wrapper">
           <input class="input-checkbox" type="checkbox" name="enable-inventory-menu-update" value="1"
             id="enable-inventory-menu-update" />
@@ -443,7 +449,8 @@
         </div>
       </div>
       <div class="input-container">
-        <label for="reset-collection-updates-inventory" data-text="menu.reset_button_updates_inventory">Collection reset updates inventory</label>
+        <label for="reset-collection-updates-inventory" data-text="menu.reset_button_updates_inventory">Collection reset
+          updates inventory</label>
         <div class="input-checkbox-wrapper">
           <input class="input-checkbox" type="checkbox" name="reset-collection-updates-inventory" value="0"
             id="reset-collection-updates-inventory" />
@@ -477,6 +484,22 @@
       <span class="header-border"></span>
     </div>
     <div class="settings-container">
+      <div class="input-container-noflex">
+        <button class="btn btn-default" data-text="menu.generate_route" href="javascript:void(0);"
+          onclick="Routes.generatePath(true)">Generate route</button>
+        <button class="btn btn-default" data-text="menu.generate_route_clear" href="javascript:void(0);"
+          onclick="Routes.clearPath()">Clear route</button>
+      </div>
+      <hr class="menu-divider">
+      <div class="input-container">
+        <label for="generate-route-use-pathfinder" data-text="menu.generate_route_use_pathfinder">Use path finder
+          (slower)</label>
+        <div class="input-checkbox-wrapper">
+          <input class="input-checkbox" type="checkbox" name="generate-route-use-pathfinder" value="1"
+            id="generate-route-use-pathfinder" />
+          <label class="input-checkbox-label" for="generate-route-use-pathfinder"></label>
+        </div>
+      </div>
       <div class="input-container">
         <label for="generate-route-generate-on-visit" data-text="menu.generate_route_generate_on_visit">Generate route
           on page visit</label>
@@ -505,6 +528,15 @@
         </div>
       </div>
       <div class="input-container">
+        <label for="generate-route-allow-fasttravel" data-text="menu.generate_route_allow_fasttravel">Use fast travel in
+          path finder</label>
+        <div class="input-checkbox-wrapper">
+          <input class="input-checkbox" type="checkbox" name="generate-route-allow-fasttravel" value="1"
+            id="generate-route-allow-fasttravel" />
+          <label class="input-checkbox-label" for="generate-route-allow-fasttravel"></label>
+        </div>
+      </div>
+      <div class="input-container">
         <label for="generate-route-distance" data-text="menu.generate_route_distance">Maximum line length</label>
         <input id="generate-route-distance" class="input-day narrow-select-menu" type="number" min="1" max="200"
           value="25">
@@ -528,30 +560,8 @@
         <label for="generate-route-start-lng" data-text="menu.generate_route_start_lng">Route start long.</label>
         <input id="generate-route-start-lng" class="input-day wide-select-menu" type="number" step="any" value="8.0313">
       </div>
-      <hr class="menu-divider">
-      <div class="input-container">
-        <label for="generate-route-use-pathfinder" data-text="menu.generate_route_use_pathfinder">Use path finder
-          (very slow)</label>
-        <div class="input-checkbox-wrapper">
-          <input class="input-checkbox" type="checkbox" name="generate-route-use-pathfinder" value="1"
-            id="generate-route-use-pathfinder" />
-          <label class="input-checkbox-label" for="generate-route-use-pathfinder"></label>
-        </div>
-      </div>
-      <div class="input-container">
-        <label for="generate-route-allow-fasttravel" data-text="menu.generate_route_allow_fasttravel">Allow fast travel
-          (path finder)</label>
-        <div class="input-checkbox-wrapper">
-          <input class="input-checkbox" type="checkbox" name="generate-route-allow-fasttravel" value="1"
-            id="generate-route-allow-fasttravel" />
-          <label class="input-checkbox-label" for="generate-route-allow-fasttravel"></label>
-        </div>
-      </div>
     </div>
-    <div class="links-container">
-      <button data-text="menu.generate_route_clear" href="javascript:void(0);" onclick="Routes.clearPath()">Clear route</button>
-      <button data-text="menu.generate_route" href="javascript:void(0);" onclick="Routes.generatePath(true)">Generate route</button>
-    </div>
+
     <div class="header">
       <span class="header-border"></span>
       <h2 class="header-title" data-text="menu.custom_routes">Custom routes</h2>
@@ -569,12 +579,15 @@
         <label data-text="menu.clear_custom_routes">Clear custom route</label>
         <div class="input-action"></div>
       </div>
-    </div>
-    <div class="links-container">
-      <button data-text="menu.import_route" href="javascript:void(0);" onclick="Routes.importCustomRoute()">Import
-        route</button>
-      <button data-text="menu.export_route" href="javascript:void(0);" onclick="Routes.exportCustomRoute()">Export
-        route</button>
+      <hr class="menu-divider">
+      <div class="input-container-noflex">
+        <button class="btn btn-default" data-text="menu.import_route" href="javascript:void(0);"
+          onclick="Routes.importCustomRoute()">Import
+          route</button>
+        <button class="btn btn-default" data-text="menu.export_route" href="javascript:void(0);"
+          onclick="Routes.exportCustomRoute()">Export
+          route</button>
+      </div>
     </div>
 
     <div class="header">
@@ -828,20 +841,20 @@
   <script src="assets/js/lib/jquery.cookie.js"></script>
   <script src="assets/js/lib/leaflet.js"></script>
   <script src="assets/js/lib/oms.min.js"></script>
-  <script src="assets/js/settings.js?nocache=230"></script>
-  <script src="assets/js/cycles.js?nocache=230"></script>
-  <script src="assets/js/marker.js?nocache=230"></script>
-  <script src="assets/js/inventory.js?nocache=230"></script>
-  <script src="assets/js/treasures.js?nocache=230"></script>
-  <script src="assets/js/encounters.js?nocache=230"></script>
-  <script src="assets/js/pins.js?nocache=230"></script>
-  <script src="assets/js/map.js?nocache=230"></script>
-  <script src="assets/js/language.js?nocache=230"></script>
-  <script src="assets/js/menu.js?nocache=230"></script>
-  <script src="assets/js/routes.js?nocache=230"></script>
-  <script src="assets/js/pathfinder.js?nocache=230"></script>
-  <script src="assets/js/loot.js?nocache=230"></script>
-  <script src="assets/js/scripts.js?nocache=230"></script>
+  <script src="assets/js/settings.js?nocache=232"></script>
+  <script src="assets/js/cycles.js?nocache=232"></script>
+  <script src="assets/js/marker.js?nocache=232"></script>
+  <script src="assets/js/inventory.js?nocache=232"></script>
+  <script src="assets/js/treasures.js?nocache=232"></script>
+  <script src="assets/js/encounters.js?nocache=232"></script>
+  <script src="assets/js/pins.js?nocache=232"></script>
+  <script src="assets/js/map.js?nocache=232"></script>
+  <script src="assets/js/language.js?nocache=232"></script>
+  <script src="assets/js/menu.js?nocache=232"></script>
+  <script src="assets/js/routes.js?nocache=232"></script>
+  <script src="assets/js/pathfinder.js?nocache=232"></script>
+  <script src="assets/js/loot.js?nocache=232"></script>
+  <script src="assets/js/scripts.js?nocache=232"></script>
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-39999584-4"></script>
   <script>
