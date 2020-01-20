@@ -5,17 +5,24 @@
     font-weight: 400;
     text-rendering: optimizeLegibility
 }
-
+@font-face {
+    font-family: RDRLino;
+    src: url(../fonts/RDRLino-Regular.woff2) format("woff2"), url(../fonts/RDRLino-Regular.woff) format("woff"), url(../fonts/RDRLino-Regular.ttf) format("truetype");
+    font-style: normal;
+    font-weight: 400;
+    text-rendering: optimizeLegibility
+}
 *, *:before, *:after {
     box-sizing: border-box;
 }
 
 ::-webkit-scrollbar {
-    width: 3px;
+    width: 6px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #eee;
+    background: #aaa;
+    border-radius: 3px;
 }
 
 body {
@@ -62,7 +69,7 @@ input, textarea, select, .btn {
 }
 #main-header {
     display: flex;
-    margin: 0 10px 10px 10px;
+    margin: 10px;
 }
 
 #main-header::after {
@@ -77,7 +84,10 @@ input, textarea, select, .btn {
     background-size: auto 75px;
     padding: 6px 0;
 }
-
+#main-header-center > span {
+    font-family: RDRLino, serif;
+    font-weight: normal;
+}
 #main-header-left, #main-header-right {
     user-select: none;
     height: 75px;
@@ -438,7 +448,6 @@ input, textarea, select, .btn {
     height: 100vh;
     color: #eee;
     z-index: 1000;
-    padding-top: 10px;
     scrollbar-width: thin;
 }
 
@@ -597,6 +606,10 @@ a.wiki-page:hover {
 a.wiki-page:visited {
     color: #fff;
     text-decoration: none;
+}
+
+.highlightItems {
+    filter: drop-shadow(0 0 .5rem #cc0000) drop-shadow(0 0 .4rem #cc0000);
 }
 
 .help-popup {
@@ -905,6 +918,20 @@ a.no-style:visited {
 
 .loot-table-categories .loot-table-category, .loot-table-category-items, .loot-table-subcategory-items {
     padding: 0 20px;
+}
+
+/* Tutorial styling */
+#help-container {
+    position: relative;
+    position: -webkit-sticky;
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    min-height: 100px;
+    background-image: url(../../assets/images/help_text_bg.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    padding: 15px 25px;
 }
 
 /* Pathfinder styling */

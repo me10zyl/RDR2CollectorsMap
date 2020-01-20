@@ -25,11 +25,11 @@ var MapBase = {
         noWrap: true,
         bounds: L.latLngBounds(L.latLng(-144, 0), L.latLng(0, 176))
       }),
-      L.tileLayer((isLocalHost() ? 'assets/maps/' : 'https://jeanropke.b-cdn.net/') + 'detailed/{z}/{x}_{y}.jpg', {
+      L.tileLayer((isLocalHost() ? '' : 'https://jeanropke.b-cdn.net/') + 'assets/maps/detailed/{z}/{x}_{y}.jpg', {
         noWrap: true,
         bounds: L.latLngBounds(L.latLng(-144, 0), L.latLng(0, 176))
       }),
-      L.tileLayer((isLocalHost() ? 'assets/maps/' : 'https://jeanropke.b-cdn.net/') + 'darkmode/{z}/{x}_{y}.jpg', {
+      L.tileLayer((isLocalHost() ? '' : 'https://jeanropke.b-cdn.net/') + 'assets/maps/darkmode/{z}/{x}_{y}.jpg', {
         noWrap: true,
         bounds: L.latLngBounds(L.latLng(-144, 0), L.latLng(0, 176))
       })
@@ -79,6 +79,12 @@ var MapBase = {
       MapBase.addCoordsOnMap(e);
     });
 
+    if (Settings.isDoubleClickZoomEnabled) {
+      MapBase.map.doubleClickZoom.enable();
+    } else {
+      MapBase.map.doubleClickZoom.disable();
+    }
+
     var southWest = L.latLng(-160, -50),
       northEast = L.latLng(25, 250),
       bounds = L.latLngBounds(southWest, northEast);
@@ -98,7 +104,7 @@ var MapBase = {
       .done(function (data) {
         MapBase.overlays = data;
         MapBase.setOverlays();
-        console.info('%c[Overlays] Loaded!', 'color: #bada55');
+        console.info('%c[Overlays] Loaded!', 'color: #bada55; background: #242424');
       });
   },
 
@@ -258,7 +264,7 @@ var MapBase = {
       .done(function (data) {
         weeklySetData = data;
       });
-    console.info('%c[Weekly Sets] Loaded!', 'color: #bada55');
+    console.info('%c[Weekly Sets] Loaded!', 'color: #bada55; background: #242424');
   },
 
   removeItemFromMap: function (day, text, subdata, category, skipInventory = false) {
@@ -385,7 +391,9 @@ var MapBase = {
     var shareText = `<a href="javascript:void(0)" onclick="setClipboardText('https://jeanropke.github.io/RDR2CollectorsMap/?m=${marker.text}')">${Language.get('map.copy_link')}</a>`;
     var lootText = marker.category == 'random' ? ` | <a href="javascript:void(0)" data-toggle="modal" data-target="#detailed-loot-modal" data-table="${marker.lootTable || 'unknown'}">${Language.get('menu.loot_table.view_loot')}</a>` : '';
     var videoText = marker.video != null ? ' | <a href="' + marker.video + '" target="_blank">' + Language.get('map.video') + '</a>' : '';
-    var linksElement = $('<p>').addClass('marker-popup-links').append(shareText).append(lootText).append(videoText);
+    var importantItem = ((marker.subdata != 'agarita' && marker.subdata != 'blood_flower') ? ` | <a href="javascript:void(0)" onclick="MapBase.highlightImportantItem('${marker.text || marker.subdata}')">${Language.get('map.mark_important')}</a>` : '' );
+
+    var linksElement = $('<p>').addClass('marker-popup-links').append(shareText).append(lootText).append(videoText).append(importantItem);
 
     var buttons = marker.category == 'random' ? '' : `<div class="marker-popup-buttons">
     <button class="btn btn-danger" onclick="Inventory.changeMarkerAmount('${marker.subdata || marker.text}', -1)">↓</button>
@@ -468,11 +476,17 @@ var MapBase = {
     else
       marker.description = Language.get(`${marker.text}_${marker.day}.desc`);
 
-    tempMarker.bindPopup(MapBase.updateMarkerContent(marker), { minWidth: 300, maxWidth: 400 })
-      .on("click", function (e) {
-        Routes.addMarkerOnCustomRoute(marker.text);
-        if (Routes.customRouteEnabled) e.target.closePopup();
-      });
+    if (Settings.isPopupsEnabled) {
+      tempMarker.bindPopup(MapBase.updateMarkerContent(marker), { minWidth: 300, maxWidth: 400 });
+    }
+
+    tempMarker.on("click", function (e) {
+      if (!Settings.isPopupsEnabled) MapBase.removeItemFromMap(marker.day || '', marker.text || '', marker.subdata || '', marker.category || '');
+
+      Routes.addMarkerOnCustomRoute(marker.text);
+      if (Routes.customRouteEnabled) e.target.closePopup();
+    });
+
     Layers.itemMarkersLayer.addLayer(tempMarker);
     if (Settings.markerCluster)
       Layers.oms.addMarker(tempMarker);
@@ -508,6 +522,10 @@ var MapBase = {
   },
   game2Map: function ({ x, y, z }) {
     MapBase.debugMarker((0.01552 * y + -63.6), (0.01552 * x + 111.29), z);
+  },
+
+  highlightImportantItem (text) {
+    $(`[data-marker*=${text}]`).toggleClass('highlightItems');
   }
 };
 
@@ -530,7 +548,7 @@ MapBase.loadFastTravels = function () {
     .done(function (data) {
       fastTravelData = data;
     });
-  console.info('%c[Fast travels] Loaded!', 'color: #bada55');
+  console.info('%c[Fast travels] Loaded!', 'color: #bada55; background: #242424');
 };
 
 MapBase.addFastTravelMarker = function () {
