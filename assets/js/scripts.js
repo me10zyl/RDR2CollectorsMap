@@ -156,7 +156,8 @@ function init() {
 }
 
 function isLocalHost() {
-  return location.hostname === "localhost" || location.hostname === "127.0.0.1";
+  return true;
+  //location.hostname === "localhost" || location.hostname === "127.0.0.1";
 }
 
 function setMapBackground(mapIndex) {
