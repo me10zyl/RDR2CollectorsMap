@@ -124,10 +124,11 @@ Menu.refreshMenu = function () {
     if (category.data('type') == 'treasure') return;
 
     // if the cycle is the same as yesterday highlight category in menu;
-    var hasCycleWarning = $(`[data-text="menu.${category.data('type')}"] .same-cycle-warning-menu`).length;
-    if (Cycles.isSameAsYesterday(category.data('type')) && !hasCycleWarning) {
+    var isSameCycle = Cycles.isSameAsYesterday(category.data('type'));
+    var hasCycleWarning = $(`[data-text="menu.${category.data('type')}"] .same-cycle-warning-menu`).length > 0;
+    if (isSameCycle && !hasCycleWarning) {
       $(`[data-text="menu.${category.data('type')}"]`).append(`<img class="same-cycle-warning-menu" src="./assets/images/same-cycle-alert.png">`);
-    } else if (hasCycleWarning) {
+    } else if (!isSameCycle && hasCycleWarning) {
       $(`[data-text="menu.${category.data('type')}"] .same-cycle-warning-menu`).remove();
     }
 
@@ -182,10 +183,11 @@ Menu.hideAll = function () {
 };
 
 Menu.refreshItemsCounter = function () {
+  var _markers = MapBase.markers.filter(item => item.day == Cycles.data.cycles[Cycles.data.current][item.category] && item.isVisible);
 
   $('.collectables-counter').text(Language.get('menu.collectables_counter')
-    .replace('{count}', MapBase.markers.filter(item => item.day == Cycles.data.cycles[Cycles.data.current][item.category] && item.isVisible && (item.isCollected || item.amount == 10)).length)
-    .replace('{max}', MapBase.markers.filter(item => item.day == Cycles.data.cycles[Cycles.data.current][item.category] && item.isVisible).length));
+    .replace('{count}', _markers.filter(item => item.isCollected || item.amount >= Inventory.stackSize).length)
+    .replace('{max}', _markers.length));
 };
 
 // Auto fill debug markers inputs, when "show coordinates on click" is enabled
@@ -193,7 +195,3 @@ Menu.liveUpdateDebugMarkersInputs = function (lat, lng) {
   $('#debug-marker-lat').val(lat);
   $('#debug-marker-lng').val(lng);
 }
-// Auto remove debug markers coordinates when "show coordinates on click" is disabled
-$('#show-coordinates').on('change', function () {
-  $('#debug-marker-lat, #debug-marker-lng, #debug-marker-name').val('');
-});
