@@ -108,7 +108,7 @@ var Inventory = {
     });
 
     localStorage.setItem("inventory-items", temp);
-   
+    zyl.menuSaved();
   },
 
   toggleMenuItemsDisabled: function () {
