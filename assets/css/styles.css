@@ -621,7 +621,7 @@ a.wiki-page:visited {
     text-decoration: none;
 }
 
-.highlightItems {
+.highlight-items {
     filter: drop-shadow(0 0 .5rem #cc0000) drop-shadow(0 0 .4rem #cc0000);
 }
 
@@ -802,8 +802,22 @@ a.no-style:visited {
     text-decoration: none;
 }
 
-.leaflet-overlay-pane.dark-mode {
+.leaflet-dark-mode .leaflet-overlay-pane {
     filter: grayscale(1) invert(1);
+}
+
+.leaflet-control-attribution {
+    background: white;
+    color: #333;
+}
+
+.leaflet-dark-mode .leaflet-control-attribution {
+    background: #333;
+    color: white;
+}
+
+.leaflet-dark-mode .leaflet-control-attribution a {
+    color: white !important;
 }
 
 /* Bootstrap modal styling */

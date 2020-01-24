@@ -17,6 +17,7 @@ var MapBase = {
   map: null,
   overlays: [],
   markers: [],
+  itemsMarkedAsImportant: [],
 
   init: function () {
 
@@ -24,19 +25,23 @@ var MapBase = {
     var mapLayers = [
       L.tileLayer('https://s.rsg.sc/sc/images/games/RDR2/map/game/{z}/{x}/{y}.jpg', {
         noWrap: true,
-        bounds: L.latLngBounds(L.latLng(-144, 0), L.latLng(0, 176))
+        bounds: L.latLngBounds(L.latLng(-144, 0), L.latLng(0, 176)),
+        attribution: '<a href="https://www.rockstargames.com/" target="_blank">Rockstar Games</a>'
       }),
       L.tileLayer((isLocalHost() ? '' : 'https://jeanropke.b-cdn.net/') + 'assets/maps/detailed/{z}/{x}_{y}.jpg', {
         noWrap: true,
-        bounds: L.latLngBounds(L.latLng(-144, 0), L.latLng(0, 176))
+        bounds: L.latLngBounds(L.latLng(-144, 0), L.latLng(0, 176)),
+        attribution: '<a href="https://rdr2map.com/" target="_blank">RDR2Map</a>'
       }),
       L.tileLayer((isLocalHost() ? '' : 'https://jeanropke.b-cdn.net/') + 'assets/maps/darkmode/{z}/{x}_{y}.jpg', {
         noWrap: true,
-        bounds: L.latLngBounds(L.latLng(-144, 0), L.latLng(0, 176))
+        bounds: L.latLngBounds(L.latLng(-144, 0), L.latLng(0, 176)),
+        attribution: '<a href="https://github.com/TDLCTV" target="_blank">TDLCTV</a>'
       })
     ];
 
     MapBase.map = L.map('map', {
+      attributionControl: false,
       preferCanvas: true,
       minZoom: this.minZoom,
       maxZoom: this.maxZoom,
@@ -44,6 +49,13 @@ var MapBase = {
       crs: L.CRS.Simple,
       layers: [mapLayers[parseInt($.cookie('map-layer'))]]
     }).setView([-70, 111.75], 3);
+
+    MapBase.map.addControl(
+      L.control.attribution({
+        position: 'bottomleft',
+        prefix: '<span data-text="map.attribution_prefix">Tiles provided by</span>'
+      })
+    );
 
     L.control.zoom({
       position: 'bottomright'
@@ -173,7 +185,11 @@ var MapBase = {
           Inventory.items[value.text].isCollected = false;
 
         markers[key].isCollected = false;
-        markers[key].canCollect = value.amount < Inventory.stackSize;
+
+        if (Inventory.isEnabled)
+          markers[key].canCollect = value.amount < Inventory.stackSize;
+        else
+          markers[key].canCollect = true;
       });
 
       MapBase.markers = markers;
@@ -265,6 +281,8 @@ var MapBase = {
 
     if (Routes.generateOnVisit)
       Routes.generatePath(true);
+
+    MapBase.loadImportantItems();
   },
 
   loadWeeklySet: function () {
@@ -505,6 +523,8 @@ var MapBase = {
     Layers.itemMarkersLayer.addLayer(tempMarker);
     if (Settings.markerCluster)
       Layers.oms.addMarker(tempMarker);
+
+    MapBase.loadImportantItems();
   },
 
 
@@ -542,7 +562,29 @@ var MapBase = {
   },
 
   highlightImportantItem(text) {
-    $(`[data-marker*=${text}]`).toggleClass('highlightItems');
+    $(`[data-marker*=${text}]`).toggleClass('highlight-items');
+
+    if ($(`[data-marker*=${text}].highlight-items`).length)
+      MapBase.itemsMarkedAsImportant.push(text);
+    else
+      MapBase.itemsMarkedAsImportant.splice(MapBase.itemsMarkedAsImportant.indexOf(text), 1);
+
+    $.each(localStorage, function (key) {
+      localStorage.removeItem('importantItems');
+    });
+
+    localStorage.setItem('importantItems', JSON.stringify(MapBase.itemsMarkedAsImportant));
+  },
+
+  loadImportantItems() {
+    if (typeof localStorage.importantItems === 'undefined')
+      localStorage.importantItems = "[]";
+
+    MapBase.itemsMarkedAsImportant = JSON.parse(localStorage.importantItems) || [];
+
+    $.each(MapBase.itemsMarkedAsImportant, function (key, value) {
+      $(`[data-marker*=${value}]`).addClass('highlight-items');
+    });
   }
 };
 
