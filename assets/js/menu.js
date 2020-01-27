@@ -37,12 +37,15 @@ Menu.refreshMenu = function () {
     var collectibleText = null;
     var collectibleTitle = null;
 
-    if (marker.category == 'american_flowers') {
-      collectibleKey = `flower_${marker.subdata}`;
-    } else if (marker.category == 'bird_eggs') {
-      collectibleKey = `egg_${marker.subdata}`;
-    } else {
-      collectibleKey = marker.text;
+    switch (marker.category) {
+      case 'american_flowers':
+        collectibleKey = `flower_${marker.subdata}`;
+        break;
+      case 'bird_eggs':
+        collectibleKey = `egg_${marker.subdata}`;
+        break;
+      default:
+        collectibleKey = marker.text;
     }
 
     if (marker.subdata) {
@@ -75,6 +78,12 @@ Menu.refreshMenu = function () {
     collectibleCountIncreaseElement.on('click', function (e) {
       e.stopPropagation();
       Inventory.changeMarkerAmount(collectibleText, 1)
+    });
+
+    collectibleElement.on('contextmenu', function (event) {
+      event.preventDefault();
+      if (marker.subdata != 'agarita' && marker.subdata != 'blood_flower')
+        MapBase.highlightImportantItem(marker.subdata || marker.text);
     });
 
     var collectibleCountElement = $('<span>').addClass('counter').append(collectibleCountDecreaseElement).append(collectibleCountTextElement).append(collectibleCountIncreaseElement);
@@ -110,7 +119,7 @@ Menu.refreshMenu = function () {
     }
 
     $.each(weeklyItems, function (key, weeklyItem) {
-      if (`flower_${marker.subdata}` == weeklyItem.item || `egg_${marker.subdata}` == weeklyItem.item || marker.text == weeklyItem.item) {
+      if (collectibleKey == weeklyItem.item) {
         collectibleElement.attr('data-help', 'item_weekly');
         collectibleElement.addClass('weekly-item');
       }
@@ -124,7 +133,7 @@ Menu.refreshMenu = function () {
       var language = Language.get(`help.${$(this).data('help')}`);
 
       if (language.indexOf('{collection}') !== -1) {
-        language = language.replace('{collection}', Language.get('weekly.desc.' + weeklySetData.current))
+        language = language.replace('{collection}', Language.get('weekly.desc.' + weeklySetData.current));
       }
 
       $('#help-container p').text(language);

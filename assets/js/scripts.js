@@ -903,6 +903,11 @@ L.LayerGroup.include({
   }
 });
 
+// Disable annoying menu on right mouse click
+$('*').on('contextmenu', function (event) {
+  event.preventDefault();
+});
+
 /**
  * Event listeners
  */
