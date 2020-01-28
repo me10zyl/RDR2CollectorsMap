@@ -72,12 +72,12 @@ Menu.refreshMenu = function () {
 
     collectibleCountDecreaseElement.on('click', function (e) {
       e.stopPropagation();
-      Inventory.changeMarkerAmount(collectibleText, -1)
+      Inventory.changeMarkerAmount(collectibleText, -1);
     });
 
     collectibleCountIncreaseElement.on('click', function (e) {
       e.stopPropagation();
-      Inventory.changeMarkerAmount(collectibleText, 1)
+      Inventory.changeMarkerAmount(collectibleText, 1);
     });
 
     collectibleElement.on('contextmenu', function (event) {
@@ -91,8 +91,10 @@ Menu.refreshMenu = function () {
     if (!Inventory.isEnabled)
       collectibleCountElement.hide();
 
-    if (marker.lat.length == 0 || marker.tool == -1)
+    if (marker.lat.length == 0 || marker.tool == -1) {
       collectibleElement.addClass('not-found');
+      $(`.menu-option[data-type=${marker.category}]`).attr('data-help', 'item_category_unavailable_items').addClass('not-found');
+    }
 
     if (Inventory.isEnabled && marker.amount >= Inventory.stackSize)
       collectibleElement.addClass('disabled');
@@ -161,6 +163,7 @@ Menu.refreshMenu = function () {
       element.children('.same-cycle-warning-menu').remove();
     }
 
+    if (!Settings.sortItemsAlphabetically) return;
     if (category.data('type').includes('card_')) return;
 
     var children = category.children('.collectible-wrapper');
@@ -224,3 +227,11 @@ Menu.liveUpdateDebugMarkersInputs = function (lat, lng) {
   $('#debug-marker-lat').val(lat);
   $('#debug-marker-lng').val(lng);
 }
+
+// Remove highlight from all important items
+$('#clear_highlights').on('click', function () {
+  var tempArray = MapBase.itemsMarkedAsImportant;
+  $.each(tempArray, function () {
+    MapBase.highlightImportantItem(tempArray[0]);
+  });
+});

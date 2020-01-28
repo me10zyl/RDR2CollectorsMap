@@ -148,6 +148,7 @@ function init() {
   $('#pins-edit-mode').prop("checked", Settings.isPinsEditingEnabled);
   $('#show-help').prop("checked", Settings.showHelp);
   $('#show-coordinates').prop("checked", Settings.isCoordsEnabled);
+  $('#sort-items-alphabetically').prop("checked", Settings.sortItemsAlphabetically);
 
   if (Settings.showHelp) {
     $("#help-container").show();
@@ -168,18 +169,21 @@ function setMapBackground(mapIndex) {
   switch (parseInt(mapIndex)) {
     default:
     case 0:
-      $('#map').removeClass('leaflet-dark-mode').css('background-color', '#d2b790');
+      $('#map').css('background-color', '#d2b790');
+      MapBase.isDarkMode = false;
       break;
 
     case 1:
-      $('#map').removeClass('leaflet-dark-mode').css('background-color', '#d2b790');
+      $('#map').css('background-color', '#d2b790');
+      MapBase.isDarkMode = false;
       break;
 
     case 2:
-      $('#map').addClass('leaflet-dark-mode').css('background-color', '#3d3d3d');
+      $('#map').css('background-color', '#3d3d3d');
+      MapBase.isDarkMode = true;
       break;
   }
-
+  MapBase.setOverlays();
   $.cookie('map-layer', mapIndex, { expires: 999 });
 }
 
@@ -300,14 +304,11 @@ $('.menu-option.clickable input').on('change', function (e) {
 
 //Search system on menu
 $("#search").on("input", function () {
-  searchTerms = [];
-  $.each($('#search').val().split(';'), function (key, value) {
-    if ($.inArray(value.trim(), searchTerms) == -1) {
-      if (value.length > 0)
-        searchTerms.push(value.trim());
-    }
-  });
-  MapBase.onSearch();
+  MapBase.onSearch($('#search').val());
+});
+
+$("#copy-search-link").on("click", function () {
+  setClipboardText(`http://jeanropke.github.io/RDR2CollectorsMap/?search=${$('#search').val()}`)
 });
 
 //Change & save tool type
@@ -557,6 +558,12 @@ $('#enable-dclick-zoom').on("change", function () {
   } else {
     MapBase.map.doubleClickZoom.disable();
   }
+});
+
+$('#sort-items-alphabetically').on("change", function () {
+  Settings.sortItemsAlphabetically = $("#sort-items-alphabetically").prop('checked');
+  $.cookie('sort-items-alphabetically', Settings.sortItemsAlphabetically ? '1' : '0', { expires: 999 });
+  Menu.refreshMenu();
 });
 
 /**
@@ -865,9 +872,10 @@ $('#generate-route-allow-fasttravel').on("change", function () {
  * Tutorial logic
  */
 $('[data-help]').hover(function (e) {
-  $('#help-container p').text(Language.get(`help.${$(this).data('help')}`));
+  var attr = $(this).attr('data-help');
+  $('#help-container p').attr('data-text', `help.${attr}`).text(Language.get(`help.${attr}`));
 }, function () {
-  $('#help-container p').text(Language.get(`help.default`));
+  $('#help-container p').attr('data-text', `help.default`).text(Language.get(`help.default`));
 });
 
 $('#show-help').on("change", function () {
@@ -884,12 +892,11 @@ $('#show-help').on("change", function () {
 /**
  * Leaflet plugins
  */
-L.Icon.DataMarkup = L.Icon.extend({
+L.DivIcon.DataMarkup = L.DivIcon.extend({
   _setIconStyles: function (img, name) {
-    L.Icon.prototype._setIconStyles.call(this, img, name);
-    if (this.options.marker) {
+    L.DivIcon.prototype._setIconStyles.call(this, img, name);
+    if (this.options.marker)
       img.dataset.marker = this.options.marker;
-    }
   }
 });
 
@@ -905,7 +912,8 @@ L.LayerGroup.include({
 
 // Disable annoying menu on right mouse click
 $('*').on('contextmenu', function (event) {
-  event.preventDefault();
+  if($.cookie('right-click') == null)
+    event.preventDefault();
 });
 
 /**

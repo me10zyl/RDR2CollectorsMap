@@ -18,6 +18,7 @@ var MapBase = {
   overlays: [],
   markers: [],
   itemsMarkedAsImportant: [],
+  isDarkMode: false,
 
   init: function () {
 
@@ -127,7 +128,8 @@ var MapBase = {
     if (opacity == 0) return;
 
     $.each(MapBase.overlays, function (key, value) {
-      Layers.overlaysLayer.addLayer(L.imageOverlay(value.img, value.bounds, { opacity: opacity }));
+      Layers.overlaysLayer.addLayer(
+        L.imageOverlay(`assets\\overlays\\${(MapBase.isDarkMode ? 'dark' : 'normal')}\\${value.img}`, value.bounds, { opacity: opacity }));
     });
 
     Layers.overlaysLayer.addTo(MapBase.map);
@@ -165,7 +167,7 @@ var MapBase = {
     $.each(data, function (_category, _cycles) {
       $.each(_cycles, function (day, _markers) {
         $.each(_markers, function (key, marker) {
-          MapBase.markers.push(new Marker(marker.text, marker.lat, marker.lng, marker.tool, day, _category, marker.subdata, marker.video));
+          MapBase.markers.push(new Marker(marker.text, marker.lat, marker.lng, marker.tool, day, _category, marker.subdata, marker.video, marker.height));
         });
       });
     });
@@ -200,8 +202,20 @@ var MapBase = {
 
     MapBase.addMarkers(true);
 
-    //if a marker is passed on url, check if is valid
-    if (goTo = MapBase.markers.filter(_m => _m.text == getParameterByName('m') && _m.day == Cycles.data.cycles[Cycles.data.current][_m.category])[0]) {
+    // Do search via URL.
+    var searchParam = getParameterByName('search');
+    if (searchParam != null && searchParam) {
+      $('#search').val(searchParam)
+      MapBase.onSearch(searchParam);
+    }
+
+    // Navigate to marker via URL.
+    var markerParam = getParameterByName('m');
+    if (markerParam != null && markerParam != '') {
+      var goTo = MapBase.markers.filter(_m => _m.text == markerParam && _m.day == Cycles.data.cycles[Cycles.data.current][_m.category])[0];
+      
+      //if a marker is passed on url, check if is valid
+      if (typeof goTo == 'undefined' || goTo == null) return;
 
       //set map view with marker lat & lng
       MapBase.map.setView([goTo.lat, goTo.lng], 6);
@@ -218,7 +232,15 @@ var MapBase = {
     }
   },
 
-  onSearch: function () {
+  onSearch: function (searchString) {
+    searchTerms = [];
+    $.each(searchString.split(';'), function (key, value) {
+      if ($.inArray(value.trim(), searchTerms) == -1) {
+        if (value.length > 0)
+          searchTerms.push(value.trim());
+      }
+    });
+
     if (searchTerms.length == 0) {
       uniqueSearchMarkers = MapBase.markers;
     } else {
@@ -408,6 +430,31 @@ var MapBase = {
     }
   },
 
+  getToolName: function (type) {
+    switch (type) {
+      default:
+      case '0':
+        return 'random';
+      case '1':
+        return 'shovel';
+      case '2':
+        return 'magnet';
+    }
+  },
+
+  getToolIcon: function (type) {
+    switch (type) {
+      case '-1':
+        return '<img class="tool-type" src="assets/images/cross.png">';
+      default:
+      case '0':
+        return '';
+      case '1':
+        return '<img class="tool-type" src="assets/images/shovel.png">';
+      case '2':
+        return '<img class="tool-type" src="assets/images/magnet.png">';
+    }
+  },
 
   updateMarkerContent: function (marker) {
     var popupContent = '';
@@ -424,7 +471,8 @@ var MapBase = {
 
     var shareText = `<a href="javascript:void(0)" onclick="setClipboardText('https://jeanropke.github.io/RDR2CollectorsMap/?m=${marker.text}')">${Language.get('map.copy_link')}</a>`;
     var videoText = marker.video != null ? ' | <a href="' + marker.video + '" target="_blank">' + Language.get('map.video') + '</a>' : '';
-    var importantItem = ((marker.subdata != 'agarita' && marker.subdata != 'blood_flower') ? ` | <a href="javascript:void(0)" onclick="MapBase.highlightImportantItem('${marker.text || marker.subdata}')">${Language.get('map.mark_important')}</a>` : '');
+    var importantItem = ((marker.subdata != 'agarita' && marker.subdata != 'blood_flower') ? ` | <a href="javascript:void(0)" onclick="MapBase.highlightImportantItem('${marker.text || marker.subdata}', '${marker.category}')">${Language.get('map.mark_important')}</a>` : '');
+
 
     var linksElement = $('<p>').addClass('marker-popup-links').append(shareText).append(videoText).append(importantItem);
 
@@ -460,24 +508,44 @@ var MapBase = {
       return weekly.item === (marker.text).replace(/_\d+/, "");
     }).length > 0;
 
-    var icon = '';
+    var overlay = '';
+    var icon = `./assets/images/icons/${marker.category}.png`;
+    var background = `./assets/images/icons/marker_${MapBase.getIconColor(isWeekly ? 'weekly' : 'day_' + marker.day)}.png`;
+    var shadow = './assets/images/markers-shadow.png';
+
+    // Random items override
+    if (marker.category == 'random') {
+      icon = `./assets/images/icons/${MapBase.getToolName(marker.tool)}.png`;
+      background = './assets/images/icons/marker_lightgray.png';
+    }
+
+    // Height overlays
+    if (marker.height == '1') {
+      overlay = '<img class="overlay" src="./assets/images/icons/overlay_high.png" alt="Overlay">'
+    }
+
+    if (marker.height == '-1') {
+      overlay = '<img class="overlay" src="./assets/images/icons/overlay_low.png" alt="Overlay">'
+    }
+
+    // Timed flower overlay override
     if (marker.subdata == 'agarita' || marker.subdata == 'blood_flower') {
-      icon = `./assets/images/icons/${marker.category}_timed_${MapBase.getIconColor(isWeekly ? 'weekly' : 'day_' + marker.day)}.png`;
-    } else if (marker.category == 'random') {
-      icon = `./assets/images/icons/${marker.category}_lightgray_${marker.tool}.png`;
-    } else {
-      icon = `./assets/images/icons/${marker.category}_${MapBase.getIconColor(isWeekly ? 'weekly' : 'day_' + marker.day)}.png`;
+      overlay = '<img class="overlay" src="./assets/images/icons/overlay_time.png" alt="Overlay">'
     }
 
     var tempMarker = L.marker([marker.lat, marker.lng], {
       opacity: marker.canCollect ? opacity : opacity / 3,
-      icon: new L.Icon.DataMarkup({
-        iconUrl: icon,
+      icon: new L.DivIcon.DataMarkup({
         iconSize: [35, 45],
         iconAnchor: [17, 42],
         popupAnchor: [1, -32],
         shadowAnchor: [10, 12],
-        shadowUrl: './assets/images/markers-shadow.png',
+        html: `
+          ${overlay}
+          <img class="icon" src="${icon}" alt="Icon">
+          <img class="background" src="${background}" alt="Background">
+          <img class="shadow" src="${shadow}" alt="Shadow">
+        `,
         marker: marker.text
       })
     });
@@ -561,9 +629,17 @@ var MapBase = {
     MapBase.debugMarker((0.01552 * y + -63.6), (0.01552 * x + 111.29), z);
   },
 
-  highlightImportantItem(text) {
-    $(`[data-marker*=${text}]`).toggleClass('highlight-items');
+
+  highlightImportantItem(text, category) {
+    if (category === 'american_flowers' || category === 'bird_eggs')
+      text = text.replace(/(egg_|flower_)(\w+)(_\d)/, '$2');
+
     $(`[data-type=${text}]`).toggleClass('highlight-important-items-menu');
+
+    if (text === 'eagle') // prevent from highlight eagle coins and eggs together
+      text = 'egg_eagle';
+
+    $(`[data-marker*=${text}]`).toggleClass('highlight-items');
 
     if ($(`[data-marker*=${text}].highlight-items`).length)
       MapBase.itemsMarkedAsImportant.push(text);
@@ -590,20 +666,6 @@ var MapBase = {
   }
 };
 
-MapBase.getToolIcon = function (type) {
-  switch (type) {
-    case '-1':
-      return '<img class="tool-type" src="assets/images/cross.png">';
-    default:
-    case '0':
-      return '';
-    case '1':
-      return '<img class="tool-type" src="assets/images/shovel.png">';
-    case '2':
-      return '<img class="tool-type" src="assets/images/magnet.png">';
-  }
-};
-
 MapBase.loadFastTravels = function () {
   $.getJSON('data/fasttravels.json?nocache=' + nocache)
     .done(function (data) {
@@ -617,13 +679,16 @@ MapBase.addFastTravelMarker = function () {
     $.each(fastTravelData, function (key, value) {
 
       var marker = L.marker([value.x, value.y], {
-        icon: L.icon({
-          iconUrl: './assets/images/icons/fast_travel_gray.png',
+        icon: L.divIcon({
           iconSize: [35, 45],
           iconAnchor: [17, 42],
           popupAnchor: [1, -32],
           shadowAnchor: [10, 12],
-          shadowUrl: './assets/images/markers-shadow.png'
+          html: `
+            <img class="icon" src="./assets/images/icons/fast_travel.png" alt="Icon">
+            <img class="background" src="./assets/images/icons/marker_gray.png" alt="Background">
+            <img class="shadow" src="./assets/images/markers-shadow.png" alt="Shadow">
+          `
         })
       });
 
@@ -643,13 +708,16 @@ MapBase.submitDebugForm = function () {
 
 MapBase.debugMarker = function (lat, long, name = 'Debug Marker') {
   var marker = L.marker([lat, long], {
-    icon: L.icon({
-      iconUrl: './assets/images/icons/random_lightred.png',
+    icon: L.divIcon({
       iconSize: [35, 45],
       iconAnchor: [17, 42],
       popupAnchor: [1, -32],
       shadowAnchor: [10, 12],
-      shadowUrl: './assets/images/markers-shadow.png'
+      html: `
+        <img class="icon" src="./assets/images/icons/random.png" alt="Icon">
+        <img class="background" src="./assets/images/icons/marker_darkblue.png" alt="Background">
+        <img class="shadow" src="./assets/images/markers-shadow.png" alt="Shadow">
+      `
     })
   });
   var customMarkerName = ($('#debug-marker-name').val() != '' ? $('#debug-marker-name').val() : name);
@@ -719,13 +787,16 @@ var MadamNazar = {
 
     if (enabledCategories.includes('nazar')) {
       var marker = L.marker([MadamNazar.possibleLocations[MadamNazar.currentLocation].x, MadamNazar.possibleLocations[MadamNazar.currentLocation].y], {
-        icon: L.icon({
-          iconUrl: './assets/images/icons/nazar_red.png',
+        icon: L.divIcon({
           iconSize: [35, 45],
           iconAnchor: [17, 42],
           popupAnchor: [1, -32],
           shadowAnchor: [10, 12],
-          shadowUrl: './assets/images/markers-shadow.png'
+          html: `
+            <img class="icon" src="./assets/images/icons/nazar.png" alt="Icon">
+            <img class="background" src="./assets/images/icons/marker_red.png" alt="Background">
+            <img class="shadow" src="./assets/images/markers-shadow.png" alt="Shadow">
+          `
         })
       });
       marker.bindPopup(`<h1>${Language.get('menu.madam_nazar')} - ${MadamNazar.currentDate}</h1><p style="text-align: center;">${Language.get('map.madam_nazar.desc').replace('{link}', '<a href="https://twitter.com/MadamNazarIO" target="_blank">@MadamNazarIO</a>')}</p>`, { minWidth: 300 });
