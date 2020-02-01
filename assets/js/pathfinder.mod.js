@@ -2,13 +2,12 @@ var GeoJSONPathFinder = require('geojson-path-finder')
 var point = require('turf-point')
 var featurecollection = require('turf-featurecollection')
 
-var ambarino = null, lemoyne = null, newAustin = null, newHanover = null, westElizabeth = null, fasttravel = null
+var ambarino = null, lemoyne = null, newAustin = null, newHanover = null, westElizabeth = null, fasttravel = null, railroads = null
 
 function loadGeoJsonData(path) {
 	return new Promise((res) => {
 		$.getJSON(path + '?nocache=' + nocache)
 			.done(function(data){
-				console.log('[pathfinder] geojson ' + path.substr(path.lastIndexOf('/')+1) + ' loaded')
 				res(data)
 			})
 			.fail(function(){
@@ -25,7 +24,9 @@ async function loadAllGeoJson() {
 	newAustin = await loadGeoJsonData('data/geojson/new-austin.json')
 	newHanover = await loadGeoJsonData('data/geojson/new-hanover.json')
 	westElizabeth = await loadGeoJsonData('data/geojson/west-elizabeth.json')
+
 	fasttravel = await loadGeoJsonData('data/geojson/fasttravel.json')
+	railroads = await loadGeoJsonData('data/geojson/railroads.json')
 
 	var completeGeoJson = {"type":"FeatureCollection","features":[]}
 	completeGeoJson.features = completeGeoJson.features.concat(ambarino.features)
@@ -38,6 +39,15 @@ async function loadAllGeoJson() {
 	var completeGeoJsonFT = Object.assign({}, completeGeoJson)
 	completeGeoJsonFT.features = completeGeoJson.features.concat(fasttravel.features)
 	PathFinder._geoJsonFT = completeGeoJsonFT
+
+	var completeGeoJsonRR = Object.assign({}, completeGeoJson)
+	completeGeoJsonRR.features = completeGeoJson.features.concat(railroads.features)
+	PathFinder._geoJsonRR = completeGeoJsonRR
+
+	var completeGeoJsonFTRR = Object.assign({}, completeGeoJson)
+	completeGeoJsonFTRR.features = completeGeoJson.features.concat(fasttravel.features)
+	completeGeoJsonFTRR.features = completeGeoJsonFTRR.features.concat(railroads.features)
+	PathFinder._geoJsonFTRR = completeGeoJsonFTRR
 }
 
 
@@ -300,9 +310,14 @@ class PathFinder {
 		PathFinder._running = false
 		PathFinder._geoJson = null
 		PathFinder._geoJsonFT = null
+		PathFinder._geoJsonRR = null
+		PathFinder._geoJsonFTRR = null
 		PathFinder._nodeCache = {}
 		PathFinder._cancel = false
 		PathFinder._pathfinderFT = false
+		PathFinder._pathfinderRR = false
+		PathFinder._pathfinderFTWeight = 0.9
+		PathFinder._pathfinderRRWeight = 1.1
 		PathFinder._worker = null
 		PathFinder._drawing = false
 		PathFinder._redrawWhenFinished = false
@@ -319,7 +334,6 @@ class PathFinder {
 	 * @param {Array<Marker>} markers
 	 */
 	static generateChunks(markers) {
-		console.log('[pathfinder] Sorting markers into chunks')
 		Chunk.clearChunks()
 	
 		for(var i = 0; i < markers.length; i++) {
@@ -331,23 +345,39 @@ class PathFinder {
 	 * Creating the GeoJSON Path Finder object from geojson data and extracting all nodes
 	 * @static
 	 * @param {Boolean} allowFastTravel Wether or not to include fast travel nodes
+	 * @param {Boolean} allowRailroads Wether or not to include rail roades nodes
+	 * @param {Number} fastTravelWeight Multiplier for fast travel road weights
+	 * @param {Number} railroadWeight Multiplier for rail road weights
 	 */
-	static createPathFinder(allowFastTravel) {
+	static createPathFinder(allowFastTravel, allowRailroads, fastTravelWeight, railroadWeight) {
 		if(typeof(allowFastTravel) !== 'boolean') allowFastTravel = PathFinder._pathfinderFT
-		if(PathFinder._PathFinder !== null && PathFinder._pathfinderFT == allowFastTravel) return
+		if(typeof(allowRailroads) !== 'boolean') allowRailroads = PathFinder._pathfinderRR
+		if(typeof(fastTravelWeight) !== 'number') fastTravelWeight = PathFinder._pathfinderFTWeight
+		if(typeof(railroadWeight) !== 'number') railroadWeight = PathFinder._pathfinderRRWeight
 
-		console.log('[pathfinder] Creating geojson path finder ' + (allowFastTravel ? 'with' : 'without') + ' fasttravel')
-		PathFinder._PathFinder = new GeoJSONPathFinder(allowFastTravel ? PathFinder._geoJsonFT : PathFinder._geoJson, {
+		if(
+			PathFinder._PathFinder !== null &&
+			PathFinder._pathfinderFT == allowFastTravel && PathFinder._pathfinderRR == allowRailroads &&
+			PathFinder._pathfinderFTWeight == fastTravelWeight && PathFinder._pathfinderRRWeight == railroadWeight
+		) return
+
+		let gjData = allowFastTravel ? (allowRailroads ? PathFinder._geoJsonFTRR : PathFinder._geoJsonFT) : (allowRailroads ? PathFinder._geoJsonRR : PathFinder._geoJson)
+
+		PathFinder._PathFinder = new GeoJSONPathFinder(gjData, {
 			precision: 0.04,
 			weightFn: function(a, b, props) {
 				var dx = a[0] - b[0];
 				var dy = a[1] - b[1];
 				var r = Math.sqrt(dx * dx + dy * dy);
-				if(typeof(props.type) === 'string' && props.type == 'fasttravel') r = r * 0.5
+				if(typeof(props.type) === 'string' && props.type == 'fasttravel') r = r * PathFinder._pathfinderFTWeight
+				if(typeof(props.type) === 'string' && props.type == 'railroad') r = r * PathFinder._pathfinderRRWeight
 				return r
 			}
 		})
 		PathFinder._pathfinderFT = allowFastTravel
+		PathFinder._pathfinderRR = allowRailroads
+		PathFinder._pathfinderFTWeight = fastTravelWeight
+		PathFinder._pathfinderRRWeight = railroadWeight
 		var _vertices = PathFinder._PathFinder._graph.vertices;
 		PathFinder._points = featurecollection(
 			Object
@@ -658,7 +688,6 @@ class PathFinder {
 	 * @returns {Promise}
 	 */
 	static async findHoles() {
-		console.log('[pathfinder] Searching for holes')
 		PathFinder.createPathFinder(false)
 
 		if(PathFinder._layerControl !== null) MapBase.map.removeControl(PathFinder._layerControl)
@@ -677,10 +706,8 @@ class PathFinder {
 			})
 			if(path == null) {
 				L.circle([PathFinder._points.features[i].geometry.coordinates[1], PathFinder._points.features[i].geometry.coordinates[0]], { radius: 0.04 }).addTo(PathFinder._layerGroup)
-				console.log('[pathfinder] No path found to ', sourcePoint, PathFinder._points.features[i])
 			}
 		}
-		console.log('[pathfinder] Done finding holes')
 	}
 
 	/**
@@ -688,12 +715,14 @@ class PathFinder {
 	 * @static
 	 * @param {Marker} startingMarker Where to start
 	 * @param {Array<Marker>} markers Contains markers a route should be generated for. Must contain startingMarker.
-	 * @param {Boolean} [allowFastTravel=false]
+	 * @param {Boolean} allowFastTravel Wether or not to include fast travel nodes
+	 * @param {Boolean} allowRailroads Wether or not to include rail roades nodes
+	 * @param {Number} fastTravelWeight Multiplier for fast travel road weights
+	 * @param {Number} railroadWeight Multiplier for rail road weights
 	 * @returns {Promise<Boolean>} false if geojson isn't fully loaded or route generation was canceled
 	 */
-	static async routegenStart(startingMarker, markers, allowFastTravel) {
+	static async routegenStart(startingMarker, markers, allowFastTravel, allowRailroads, fastTravelWeight, railroadWeight) {
 		if(PathFinder._geoJson === null) {
-			console.log('[pathfinder] geojson not fully loaded yet; we\'ll wait...')
 			await new Promise(async (res) => {
 				while(PathFinder._geoJson === null && PathFinder._geoJsonFT === null) {
 					await new Promise((r) => { setTimeout(() => { r() }, 100) })
@@ -704,8 +733,6 @@ class PathFinder {
 
 		// Clear layers and cancel if running
 		await PathFinder.routegenClear()
-
-		console.log('[pathfinder] Starting route generation')
 
 		PathFinder._running = true
 		PathFinder._currentChunk = null
@@ -720,7 +747,7 @@ class PathFinder {
 			var res = await new Promise((res) => {
 				var paths = []
 				PathFinder._worker = new Worker('assets/js/pathfinder.worker.js')
-				PathFinder._worker.postMessage({ cmd: 'data', geojson: PathFinder._geoJson, geojsonFT: PathFinder._geoJsonFT })
+				PathFinder._worker.postMessage({ cmd: 'data', geojson: PathFinder._geoJson, geojsonFT: PathFinder._geoJsonFT, geojsonRR: PathFinder._geoJsonRR, geojsonFTRR: PathFinder._geoJsonFTRR })
 				PathFinder._worker.addEventListener('message', function(e) {
 					var data = e.data
 					switch(data.res) {
@@ -741,14 +768,13 @@ class PathFinder {
 							break
 					}
 				})
-				PathFinder._worker.postMessage({ cmd: 'start', startingMarker: startingMarker, markers: markers, allowFastTravel: allowFastTravel })
+				PathFinder._worker.postMessage({ cmd: 'start', startingMarker: startingMarker, markers: markers, allowFastTravel: allowFastTravel, allowRailroads: allowRailroads, fastTravelWeight: fastTravelWeight, railroadWeight: railroadWeight })
 			})
 			return res
 		}
 
 		// Create GeoJSON path finder object (function will check if already created)
-		if(typeof(allowFastTravel) !== 'boolean') allowFastTravel = false
-		PathFinder.createPathFinder(allowFastTravel)
+		PathFinder.createPathFinder(allowFastTravel, allowRailroads, fastTravelWeight, railroadWeight)
 
 		// Generate Chunks
 		PathFinder.generateChunks(markers)
@@ -784,13 +810,9 @@ class PathFinder {
 			console.error('[pathfinder]', e)
 		}
 	
-		var endTime = new Date().getTime();
-
 		var canceled = PathFinder._cancel
-		if(canceled) console.log(`[pathfinder] Pathfinding was canceled`)
-		else window.setTimeout(function(){ PathFinder._layerControl.selectPath(1, true) }, 100)
+		if (!canceled) window.setTimeout(function(){ PathFinder._layerControl.selectPath(1, true) }, 100)
 
-		console.log(`[pathfinder] ${(endTime - startTime) / 1000} seconds for ${markersNum} items`)
 		PathFinder._running = false
 
 		return !canceled

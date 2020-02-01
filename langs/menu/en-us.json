@@ -67,7 +67,6 @@
 	{"key": "menu.condor_egg", "value": "Condor Egg"},
 	{"key": "menu.dog_encounter", "value": "Dog Encounter"},
 	{"key": "menu.auto_refresh", "value": "Change cycle automatically"},
-	{"key": "menu.fame_seeker", "value": "Fame Seeker"},
 	{"key": "menu.wounded_animal", "value": "Wounded Animal"},
 	{"key": "menu.clear_inventory", "value": "Clear inventory"},
 	{"key": "menu.sell", "value": "Sell"},
@@ -91,6 +90,7 @@
 	{"key": "menu.generate_route_start_lng", "value": "Route start long."},
 	{"key": "menu.generate_route_use_pathfinder", "value": "Use path finder (slower)"},
 	{"key": "menu.generate_route_allow_fasttravel", "value": "Use fast travel in path finder"},
+	{"key": "menu.generate_route_allow_railroad", "value": "Use rail roads in path finder"},
 	{"key": "menu.month.january", "value": "January"},
 	{"key": "menu.month.february", "value": "February"},
 	{"key": "menu.month.march", "value": "March"},
@@ -193,6 +193,8 @@
 	{"key": "menu.modal_clear_important_items_body", "value": "This will clear the highlight from all markers marked as important. This action cannot be undone."},
 	{"key": "menu.modal_clear_important_items_title", "value": "Clear important markers?"},
 	{"key": "menu.sort_items_alphabetically", "value": "Sort items alphabetically"},
+	{"key": "menu.enable_marker_shadows", "value": "Marker shadows enabled"},
+	{"key": "map.refresh_for_updates_alert", "value": "Today's cycles haven't been updated yet. Please refresh to check for updates."},
 
 	{"key": "help.default", "value": "Hover over or long-press (mobile) any setting to get information about it."},
 	{"key": "help.clear_custom_routes", "value": "Clears all the custom routes currently on the map."},
@@ -211,6 +213,7 @@
 	{"key": "help.export_route", "value": "Exports the created route to your clipboard."},
 	{"key": "help.generate_route", "value": "Starts the generation of a new route using the settings you specified."},
 	{"key": "help.generate_route_allow_fasttravel", "value": "Toggles whether fast travel points should be considered when generating a route."},
+	{"key": "help.generate_route_allow_railroad", "value": "Toggles whether rail roads should be considered when generating a route."},
 	{"key": "help.generate_route_auto_update", "value": "Toggles whether the route should be automatically updated when you collect an item or toggle a menu item."},
 	{"key": "help.generate_route_clear", "value": "Clears the currently generated route."},
 	{"key": "help.generate_route_distance", "value": "Allows you to set the maximum distance any given path will be. If you set this too low, the path might not complete. If you set this too high, impossible paths could be generated."},
@@ -223,7 +226,7 @@
 	{"key": "help.import_route", "value": "Imports a custom route to the map."},
 	{"key": "help.inventory_stack", "value": "Allows you to set the maximum size of any item stack. The default is 10 which is the same as in-game."},
 	{"key": "help.item_category", "value": "Toggles whether this set should be visible on the map."},
-	{"key": "help.item_category_encouters", "value": "Opens a list with all random encounters."},
+	{"key": "help.item_category_encounters", "value": "Opens a list with all random encounters."},
 	{"key": "help.item_manual_cycle", "value": "Allows you to manually set the cycle that's displayed on the map."},
 	{"key": "help.item_reset", "value": "Resets all items in this category to be uncollected."},
 	{"key": "help.item_sell", "value": "Removes 1 from every item in the current category, useful when you've just sold this set."},
@@ -258,5 +261,6 @@
 	{"key": "help.clear_important_items", "value": "Clears the highlight from all markers marked as important."},
 	{"key": "help.item_category_unavailable_items", "value": "Toggles whether this set should be visible on the map. Note that this set contains one or more items that are unavailable due to a game bug or being undiscovered."},
 	{"key": "help.search_copy_link", "value": "Copies the current search link to your clipboard so you can browse to the map with that search query."},
-	{"key": "help.sort_items_alphabetically", "value": "Whether items should be sorted alphabetically or using the in-game order."}
+	{"key": "help.sort_items_alphabetically", "value": "Whether items should be sorted alphabetically or using the in-game order."},
+	{"key": "help.enable_marker_shadows", "value": "Toggles whether a marker should have a shadow or not. Disabling the shadows could improve performance somewhat."}
 ]
